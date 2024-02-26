@@ -1,5 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +9,9 @@ public class Movie {
     private String title;
     private String description;
     // TODO add more properties here
+    private List<GENRE> genres;
 
-    public Movie(String title, String description) {
+    public Movie(String title, String description, List<GENRE> list) {
         this.title = title;
         this.description = description;
     }
