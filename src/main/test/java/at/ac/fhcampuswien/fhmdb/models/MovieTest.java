@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb.models;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.plaf.ListUI;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -43,30 +44,37 @@ class MovieTest {
     }
 
     @Test
-    public void check_if_fields_have_correct_type() {
-        assertAll("Check if the fields have the correct type",
-                () -> assertEquals(Movie.class.getDeclaredField("title").getType(),String.class, "Title is not a String"),
+    public void all_fields_should_have_correct_type() {
+        assertAll("Check if the fields of the Movie class all have the correct type",      /* all assertions should be executed even if some of them fail... */
+                () -> assertEquals(Movie.class.getDeclaredField("title").getType(), String.class, "Title field is not a String."),
 
-                () -> assertEquals(Movie.class.getDeclaredField("description").getType(),String.class, "Description is not a String"),
+                () -> assertEquals(Movie.class.getDeclaredField("description").getType(), String.class, "Description field is not a String."),
 
                 // check if genre is of type List
-                () -> assertEquals(Movie.class.getDeclaredField("genres").getType(),List.class, "Genre is not a String"),
-
-                // check if genre is a List of GENRE
-                () -> assertEquals(((ParameterizedType) Movie.class.getDeclaredField("genres").getGenericType()).getActualTypeArguments()[0],
-                        GENRE.class, "Genre is not a list of GENRRE"
+                () -> assertEquals(Movie.class.getDeclaredField("genres").getType(), List.class, "Genre field is not a List."
         ));
     }
 
     @Test
-    public void check_if_initializeMovies_Method_has_been_defined() throws NoSuchMethodException {
-        assertDoesNotThrow(() -> Movie.class.getDeclaredMethod("initializeMovies"), "Method 'initializeMovies' is not defined.");
-
+    public void all_elements_of_the_genre_list_should_be_of_type_GENRE() {
+        try {
+            assertEquals(((ParameterizedType) Movie.class.getDeclaredField("genres").getGenericType()).getActualTypeArguments()[0], GENRE.class, "The genres list does not contain elements of type GENRE.");
+            // [0] bc List only expects one generic argument. . .
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    public void check_if_initializeMovies_Method_returns_a_list_of_Movies() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        assertEquals(Movie.class.getDeclaredMethod("initializeMovies").invoke(null).getClass().getSuperclass().getInterfaces()[0], List.class, "Method 'initializeMovies' does not return a list of Movies.");
-    }
+    public void initializeMovies_Method_must_return_a_list_of_Movies() {
+        // given
+        List<Movie> movies = Movie.initializeMovies();
 
+        // list should not be null, for example if return value wasn't initialized
+        assertNotNull(movies, "The return value is null. This should not happen. Maybe the return value is not initialized?");
+
+        for (Movie movieElement : movies) {
+            assertTrue(movieElement instanceof Movie, "The list which is returned by initializeMovies() does not contain instances of Movie!");
+        }
+    }
 }
