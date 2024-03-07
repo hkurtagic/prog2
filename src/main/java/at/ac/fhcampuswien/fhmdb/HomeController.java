@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -12,8 +13,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -35,6 +36,15 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
 
+    private void sort(String order) {
+        if (order.equals("asc")) {
+            Movie.sortListOfMovies(observableMovies);
+        } else {
+            Movie.sortListOfMovies(observableMovies);
+            Collections.reverse(this.observableMovies);
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
@@ -45,7 +55,13 @@ public class HomeController implements Initializable {
 
         // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.setPromptText("Filter by Genre");
+        List<String> genreList = new ArrayList<>();
+        for (GENRE genre:List.of(GENRE.values())) {
+            genreList.add(genre.toString().replaceAll("_", " "));
+        }
+        genreComboBox.getItems().addAll(genreList);
 
+        //
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
@@ -54,9 +70,11 @@ public class HomeController implements Initializable {
             if(sortBtn.getText().equals("Sort (asc)")) {
                 // TODO sort observableMovies ascending
                 sortBtn.setText("Sort (desc)");
+                sort("asc");
             } else {
                 // TODO sort observableMovies descending
                 sortBtn.setText("Sort (asc)");
+                sort("des");
             }
         });
 
