@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -12,8 +13,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -23,10 +27,10 @@ public class HomeController implements Initializable {
     public TextField searchField;
 
     @FXML
-    public JFXListView movieListView;
+    public JFXListView<Movie> movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox<String> genreComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -44,7 +48,15 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
         // TODO add genre filter items with genreComboBox.getItems().addAll(...)
-        genreComboBox.setPromptText("Filter by Genre");
+        List<String> genreList = new ArrayList<>();
+        for (GENRE genre:List.of(GENRE.values())) {
+            genreList.add(genre.toString().replaceAll("_", " "));
+        }
+        genreComboBox.getItems().addAll(genreList);
+        //List<String> genres = allMovies.stream().map
+        //(Movie::gen).distinct().collect(Collectors.toList());
+        //genreComboBox.getItems().addAll(genres);
+        genreComboBox.setPromptText("Filter by Genre");genreComboBox.setPromptText("Filter by Genre");
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
