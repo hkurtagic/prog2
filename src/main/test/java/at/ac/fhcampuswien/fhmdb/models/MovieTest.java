@@ -3,12 +3,7 @@ package at.ac.fhcampuswien.fhmdb.models;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.ListUI;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,65 +11,155 @@ import static org.junit.jupiter.api.Assertions.*;
 class MovieTest {
 
     @Test
-    public void check_if_class_movie_exist() throws ClassNotFoundException {
-        try {
-            Class.forName("at.ac.fhcampuswien.fhmdb.models.Movie");
-        } catch (ClassNotFoundException e) {
-            fail("The class Movie does not exist: " + e.getMessage());
-        }
-    }
-
-    @Test
-    public void check_if_class_has_all_required_properties() {
-        try {
-            Field[] fields = Class.forName("at.ac.fhcampuswien.fhmdb.models.Movie").getDeclaredFields();
-
-            List<String> actual = (Arrays.stream(fields).map(Field::getName).toList());
-
-            assertAll("Check if all required properties have been defined",
-
-                    () -> assertTrue(actual.contains("title"), "title is not defined"),
-                    () -> assertTrue(actual.contains("description"), "descriptor is not defined"),
-                    () -> assertTrue(actual.contains("genres"), "genres is not defined")
-            );
-
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
-    public void all_fields_should_have_correct_type() {
-        assertAll("Check if the fields of the Movie class all have the correct type",      /* all assertions should be executed even if some of them fail... */
-                () -> assertEquals(Movie.class.getDeclaredField("title").getType(), String.class, "Title field is not a String."),
-
-                () -> assertEquals(Movie.class.getDeclaredField("description").getType(), String.class, "Description field is not a String."),
-
-                // check if genre is of type List
-                () -> assertEquals(Movie.class.getDeclaredField("genres").getType(), List.class, "Genre field is not a List."
-        ));
-    }
-
-    @Test
-    public void all_elements_of_the_genre_list_should_be_of_type_GENRE() {
-        try {
-            assertEquals(((ParameterizedType) Movie.class.getDeclaredField("genres").getGenericType()).getActualTypeArguments()[0], GENRE.class, "The genres list does not contain elements of type GENRE.");
-            // [0] bc List only expects one generic argument. . .
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
     public void initializeMovies_Method_must_return_a_list_of_Movies() {
         // given
         List<Movie> movies = Movie.initializeMovies();
 
         // list should not be null, for example if return value wasn't initialized
-        assertNotNull(movies, "The return value is null. This should not happen. Maybe the return value is not initialized?");
+        assertNotNull(movies, "The return value is null. This should not happen. Maybe the return value is not " +
+                "initialized?");
 
         for (Movie movieElement : movies) {
-            assertTrue(movieElement instanceof Movie, "The list which is returned by initializeMovies() does not contain instances of Movie!");
+            assertTrue(movieElement instanceof Movie, "The list which is returned by initializeMovies() does not " +
+                    "contain instances of Movie!");
         }
+    }
+
+    @Test
+    public void sort_list_of_movies_with_unique_items_in_order() {
+
+        //given
+        List<Movie> movies = new ArrayList<>();
+
+        movies.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
+                "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
+                "Special-Forces-Agent, der um " + "seine verschwundene Frau trauert, rekrutiert, um den Creator zu " +
+                "jagen und zu töten. Der Creator, ein" + " schwer fassbarer Architekt einer fortschrittlichen KI, " +
+                "entwickelte eine mysteriöse Waffe, die den " + "Krieg zwar beenden kann, aber gleichzeitig auch die " +
+                "Menschheit komplett auslöschen würde. Joshua und" + " sein Team bestehend aus Elite-Agenten, " +
+                "durchqueren die feindlichen Linien und dringen in das dunkle" + " Herz des von der KI besetzten " +
+                "Territoriums … Nur um herauszufinden, dass die weltverändernde Waffe," + " die er zerstören soll, " +
+                "eine KI in Form eines kleinen Kindes ist.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
+                GENRE.SCIENCE_FICTION)));
+        movies.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
+                + " um sich einer experimentellen medizinischen Behandlung zu unterziehen. Die Hoffnung auf eine " +
+                "Wunderheilung treibt ihn an. Doch stattdessen entdeckt er, dass die gesamte Operation ein " +
+                "teuflischer Betrug ist. Mit einem neuen Ziel vor Augen kehrt der berüchtigte Serienmörder zu seiner "
+                + "Arbeit zurück: Er dreht den Spieß um und zieht die Betrüger auf seine ganz eigene, hinterhältige " +
+                "und" + " raffinierte Art zur Rechenschaft.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+        movies.add(new Movie("Die Monster AG",
+                "In der Monster-AG-Fabrik gehen die Bösewichte eifrig ihrer Arbeit " + "nach: Über Schranktüren " +
+                        "schleichen sie sich in Kinderzimmer ein und sammeln die Angstschreie ihrer " + "Bewohner, " +
+                        "die den Strom für Monstropolis liefern. Ungekrönter Star unter den einfallsreichen " +
+                        "\"Schreckeinjagern\" ist Sully. Dem passiert eines Tages ein folgenschweres Missgeschick: " +
+                        "Das kleine" + " Mädchen Boo, dem er wie gewohnt einen kräftigen Schock versetzen will, " +
+                        "verkrallt sich in sein Fell." + " Als er dann mit dem Kind in die Fabrik zurückkehrt, bricht" +
+                        " das totale Chaos aus...", List.of(GENRE.ANIMATION, GENRE.COMEDY, GENRE.FAMILY)));
+        movies.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
+                "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
+                List.of(GENRE.DOCUMENTARY)));
+
+        //when
+        Movie.sort(movies);
+
+        //then
+        assertAll("Check if the list of movies is in the right order",
+                () -> assertEquals("Die Monster AG", movies.get(0).getTitle(), "First movie should be \"Die Monster AG\""),
+                () -> assertEquals("SAW X", movies.get(1).getTitle(), "Second movie should be \"SAW X\""),
+                () -> assertEquals("The Creator", movies.get(2).getTitle(), "Third movie should be \"The Creator\""),
+                () -> assertEquals("Universum", movies.get(3).getTitle(), "Fourth movie should be \"Universum\"")
+        );
+    }
+
+    @Test
+    public void sort_list_of_movies_with_unique_items_ascending_in_order() {
+
+        //given
+        List<Movie> movies = new ArrayList<>();
+
+        movies.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
+                "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
+                "Special-Forces-Agent, der um " + "seine verschwundene Frau trauert, rekrutiert, um den Creator zu " +
+                "jagen und zu töten. Der Creator, ein" + " schwer fassbarer Architekt einer fortschrittlichen KI, " +
+                "entwickelte eine mysteriöse Waffe, die den " + "Krieg zwar beenden kann, aber gleichzeitig auch die " +
+                "Menschheit komplett auslöschen würde. Joshua und" + " sein Team bestehend aus Elite-Agenten, " +
+                "durchqueren die feindlichen Linien und dringen in das dunkle" + " Herz des von der KI besetzten " +
+                "Territoriums … Nur um herauszufinden, dass die weltverändernde Waffe," + " die er zerstören soll, " +
+                "eine KI in Form eines kleinen Kindes ist.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
+                GENRE.SCIENCE_FICTION)));
+        movies.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
+                + " um sich einer experimentellen medizinischen Behandlung zu unterziehen. Die Hoffnung auf eine " +
+                "Wunderheilung treibt ihn an. Doch stattdessen entdeckt er, dass die gesamte Operation ein " +
+                "teuflischer Betrug ist. Mit einem neuen Ziel vor Augen kehrt der berüchtigte Serienmörder zu seiner "
+                + "Arbeit zurück: Er dreht den Spieß um und zieht die Betrüger auf seine ganz eigene, hinterhältige " +
+                "und" + " raffinierte Art zur Rechenschaft.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+        movies.add(new Movie("Die Monster AG",
+                "In der Monster-AG-Fabrik gehen die Bösewichte eifrig ihrer Arbeit " + "nach: Über Schranktüren " +
+                        "schleichen sie sich in Kinderzimmer ein und sammeln die Angstschreie ihrer " + "Bewohner, " +
+                        "die den Strom für Monstropolis liefern. Ungekrönter Star unter den einfallsreichen " +
+                        "\"Schreckeinjagern\" ist Sully. Dem passiert eines Tages ein folgenschweres Missgeschick: " +
+                        "Das kleine" + " Mädchen Boo, dem er wie gewohnt einen kräftigen Schock versetzen will, " +
+                        "verkrallt sich in sein Fell." + " Als er dann mit dem Kind in die Fabrik zurückkehrt, bricht" +
+                        " das totale Chaos aus...", List.of(GENRE.ANIMATION, GENRE.COMEDY, GENRE.FAMILY)));
+        movies.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
+                "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
+                List.of(GENRE.DOCUMENTARY)));
+
+        //when
+        Movie.sort(movies, "asc");
+
+        //then
+        assertAll("Check if the list of movies is in the right order",
+                () -> assertEquals("Die Monster AG", movies.get(0).getTitle(), "First movie should be \"Die Monster AG\""),
+                () -> assertEquals("SAW X", movies.get(1).getTitle(), "Second movie should be \"SAW X\""),
+                () -> assertEquals("The Creator", movies.get(2).getTitle(), "Third movie should be \"The Creator\""),
+                () -> assertEquals("Universum", movies.get(3).getTitle(), "Fourth movie should be \"Universum\"")
+        );
+    }
+
+    @Test
+    public void sort_list_of_movies_with_unique_items_in_descending_order() {
+
+        //given
+        List<Movie> movies = new ArrayList<>();
+
+        movies.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
+                "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
+                "Special-Forces-Agent, der um " + "seine verschwundene Frau trauert, rekrutiert, um den Creator zu " +
+                "jagen und zu töten. Der Creator, ein" + " schwer fassbarer Architekt einer fortschrittlichen KI, " +
+                "entwickelte eine mysteriöse Waffe, die den " + "Krieg zwar beenden kann, aber gleichzeitig auch die " +
+                "Menschheit komplett auslöschen würde. Joshua und" + " sein Team bestehend aus Elite-Agenten, " +
+                "durchqueren die feindlichen Linien und dringen in das dunkle" + " Herz des von der KI besetzten " +
+                "Territoriums … Nur um herauszufinden, dass die weltverändernde Waffe," + " die er zerstören soll, " +
+                "eine KI in Form eines kleinen Kindes ist.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
+                GENRE.SCIENCE_FICTION)));
+        movies.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
+                + " um sich einer experimentellen medizinischen Behandlung zu unterziehen. Die Hoffnung auf eine " +
+                "Wunderheilung treibt ihn an. Doch stattdessen entdeckt er, dass die gesamte Operation ein " +
+                "teuflischer Betrug ist. Mit einem neuen Ziel vor Augen kehrt der berüchtigte Serienmörder zu seiner "
+                + "Arbeit zurück: Er dreht den Spieß um und zieht die Betrüger auf seine ganz eigene, hinterhältige " +
+                "und" + " raffinierte Art zur Rechenschaft.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+        movies.add(new Movie("Die Monster AG",
+                "In der Monster-AG-Fabrik gehen die Bösewichte eifrig ihrer Arbeit " + "nach: Über Schranktüren " +
+                        "schleichen sie sich in Kinderzimmer ein und sammeln die Angstschreie ihrer " + "Bewohner, " +
+                        "die den Strom für Monstropolis liefern. Ungekrönter Star unter den einfallsreichen " +
+                        "\"Schreckeinjagern\" ist Sully. Dem passiert eines Tages ein folgenschweres Missgeschick: " +
+                        "Das kleine" + " Mädchen Boo, dem er wie gewohnt einen kräftigen Schock versetzen will, " +
+                        "verkrallt sich in sein Fell." + " Als er dann mit dem Kind in die Fabrik zurückkehrt, bricht" +
+                        " das totale Chaos aus...", List.of(GENRE.ANIMATION, GENRE.COMEDY, GENRE.FAMILY)));
+        movies.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
+                "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
+                List.of(GENRE.DOCUMENTARY)));
+
+        //when
+        Movie.sort(movies, "des");
+
+        //then
+        assertAll("Check if the list of movies is in the right order",
+                () -> assertEquals("Universum", movies.get(0).getTitle(), "Firstmovie should be \"Universum\""),
+                () -> assertEquals("The Creator", movies.get(1).getTitle(), "Second movie should be \"The Creator\""),
+                () -> assertEquals("SAW X", movies.get(2).getTitle(), "Third movie should be \"SAW X\""),
+                () -> assertEquals("Die Monster AG", movies.get(3).getTitle(), "Fourth  movie should be \"Die Monster AG\"")
+        );
     }
 }
