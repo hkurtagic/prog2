@@ -14,7 +14,6 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class HomeController implements Initializable {
     @FXML
@@ -35,15 +34,6 @@ public class HomeController implements Initializable {
     public List<Movie> allMovies = Movie.initializeMovies();
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
-
-    private void sort(String order) {
-        if (order.equals("asc")) {
-            Movie.sortListOfMovies(observableMovies);
-        } else {
-            Movie.sortListOfMovies(observableMovies);
-            Collections.reverse(this.observableMovies);
-        }
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,13 +58,11 @@ public class HomeController implements Initializable {
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
                 sortBtn.setText("Sort (desc)");
-                sort("asc");
+                Movie.sort(observableMovies, "asc");
             } else {
-                // TODO sort observableMovies descending
                 sortBtn.setText("Sort (asc)");
-                sort("des");
+                Movie.sort(observableMovies, "des");
             }
         });
 
