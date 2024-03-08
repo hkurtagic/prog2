@@ -3,10 +3,10 @@ package at.ac.fhcampuswien.fhmdb.models;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
-public class Movie implements Comparable<Movie>{
+public class Movie implements Comparable<Movie> {
     private String title;
     private String description;
 
@@ -36,7 +36,10 @@ public class Movie implements Comparable<Movie>{
 
         // TODO add some dummy data here
         movies.add(new Movie("SAW X", "The film sees John Kramer (Bell) travelling to Mexico in hopes that an " +
-                "experimental procedure may cure his terminal cancer. John later discovers that the operation is a " + "scam, prompting him to kidnap those responsible and subject them to his trademark death traps as " + "retribution.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+                                      "experimental procedure may cure his terminal cancer. John later discovers that" +
+                                      " the operation is a " + "scam, prompting him to kidnap those responsible and " +
+                                      "subject them to his trademark death traps as " + "retribution.",
+                List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
 
         movies.add(new Movie("Titanic", "A poor boy and a rich girl fall in love on a ship. The ship sinks. He dies."
                 , List.of(GENRE.ROMANCE, GENRE.HISTORY, GENRE.DRAMA)));
@@ -53,39 +56,43 @@ public class Movie implements Comparable<Movie>{
                 List.of(GENRE.ACTION, GENRE.CRIME, GENRE.DRAMA)));
 
         movies.add(new Movie("Avengers: Endgame",
-                "The epic conclusion to the Avengers saga as they attempt to undo " + "the devastating events caused " +
-                        "by the villain Thanos.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
+                "The epic conclusion to the Avengers saga as they attempt to undo " + "the devastating events caused "
+                + "by the villain Thanos.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
 
-        movies.add(new Movie("Black Panther", "T'Challa, the king of Wakanda, must defend his nation and the world " +
-                "as" + " the superhero Black Panther.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
+        movies.add(new Movie("Black Panther",
+                "T'Challa, the king of Wakanda, must defend his nation and the world " + "as" + " the superhero " +
+                "Black" + " Panther.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
 
         movies.add(new Movie("Wonder Woman", "Diana, an Amazonian princess, discovers her true destiny as Wonder " +
-                "Woman and faces the challenges of World War I.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
+                                             "Woman and faces the challenges of World War I.", List.of(GENRE.ACTION,
+                GENRE.ADVENTURE,
                 GENRE.FANTASY)));
 
         movies.add(new Movie("Spider-Man: Into the Spider-Verse",
                 "Miles Morales discovers the multiverse and teams " + "up with other Spider-People from different " +
-                        "dimensions to save all of reality.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.ANIMATION)));
+                "dimensions to save all of reality.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.ANIMATION)));
 
         movies.add(new Movie("The Shawshank Redemption",
                 "A tale of friendship and survival as two imprisoned men " + "bond over several decades, finding " +
-                        "solace and redemption in unlikely circumstances.", List.of(GENRE.DRAMA)));
+                "solace and redemption in unlikely circumstances.", List.of(GENRE.DRAMA)));
 
         movies.add(new Movie("The Grand Budapest Hotel", "A quirky comedy about the misadventures of a hotel " +
-                "concierge and his protege as they become embroiled in a theft and murder mystery.",
+                                                         "concierge and his protege as they become embroiled in a " +
+                                                         "theft and murder mystery.",
                 List.of(GENRE.COMEDY)));
 
         movies.add(new Movie("Blade Runner 2049", "In a dystopian future, a blade runner discovers a long-buried " +
-                "secret that has the potential to plunge society into chaos.", List.of(GENRE.SCIENCE_FICTION,
-                GENRE.THRILLER)));
+                                                  "secret that has the potential to plunge society into chaos.",
+                List.of(GENRE.SCIENCE_FICTION,
+                        GENRE.THRILLER)));
 
         movies.add(new Movie("La La Land",
-                "A modern musical about an aspiring actress and a jazz musician who meet " + "and fall in love while " +
-                        "pursuing their dreams in Los Angeles.", List.of(GENRE.ROMANCE, GENRE.MUSICAL, GENRE.DRAMA)));
+                "A modern musical about an aspiring actress and a jazz musician who meet " + "and fall in love while "
+                + "pursuing their dreams in Los Angeles.", List.of(GENRE.ROMANCE, GENRE.MUSICAL, GENRE.DRAMA)));
 
         movies.add(new Movie("Gone Girl",
                 "A psychological thriller that explores the disappearance of a woman and " + "the media frenzy " +
-                        "surrounding the investigation.", List.of(GENRE.MYSTERY, GENRE.DRAMA, GENRE.THRILLER)));
+                "surrounding the investigation.", List.of(GENRE.MYSTERY, GENRE.DRAMA, GENRE.THRILLER)));
 
         return movies;
     }
@@ -94,15 +101,23 @@ public class Movie implements Comparable<Movie>{
         System.out.println(Movie.initializeMovies());
     }
 
-    public static List<Movie> sortListOfMovies(List<Movie> movieList) {
+    public static void sort(List<Movie> movieList) {
         movieList.sort(Movie::compareTo);
-        return movieList;
+    }
+
+    public static void sort(List<Movie> movieList, String order) {
+        if (order.equals("des")) {
+            movieList.sort(Movie::compareTo);
+            Collections.reverse(movieList);
+        } else {
+            movieList.sort(Movie::compareTo);
+        }
     }
 
     @Override
     public int compareTo(Movie movie) {
         for (int i = 0; i < movie.getTitle().length(); i++) {
-            if (this.getTitle().toUpperCase().charAt(i) < movie.getTitle().toUpperCase().charAt(i)) return -1;
+            if (this.getTitle().toUpperCase().charAt(i) < movie.getTitle().toUpperCase().charAt(i)) return - 1;
             if (this.getTitle().toUpperCase().charAt(i) > movie.getTitle().toUpperCase().charAt(i)) return 1;
         }
         return 0;
