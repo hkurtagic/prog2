@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
+import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import org.junit.jupiter.api.Test;
 
@@ -161,5 +162,71 @@ class MovieTest {
                 () -> assertEquals("SAW X", movies.get(2).getTitle(), "Third movie should be \"SAW X\""),
                 () -> assertEquals("Die Monster AG", movies.get(3).getTitle(), "Fourth  movie should be \"Die Monster AG\"")
         );
+    }
+
+
+
+    /*
+     * * * * * * * *  SEARCH FILTER   * * * * * * * * *
+     */
+    @Test
+    public void an_empty_search_query_has_to_show_all_movies() {
+        //given
+        String searchQuery = "";
+        List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
+                "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
+                "Special-Forces-Agent, der um " + "seine verschwundene Frau trauert, rekrutiert, um den Creator zu " +
+                "jagen und zu töten. Der Creator, ein" + " schwer fassbarer Architekt einer fortschrittlichen KI, " +
+                "entwickelte eine mysteriöse Waffe, die den " + "Krieg zwar beenden kann, aber gleichzeitig auch die " +
+                "Menschheit komplett auslöschen würde. Joshua und" + " sein Team bestehend aus Elite-Agenten, " +
+                "durchqueren die feindlichen Linien und dringen in das dunkle" + " Herz des von der KI besetzten " +
+                "Territoriums … Nur um herauszufinden, dass die weltverändernde Waffe," + " die er zerstören soll, " +
+                "eine KI in Form eines kleinen Kindes ist.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
+                GENRE.SCIENCE_FICTION)));
+        movies.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
+                + " um sich einer experimentellen medizinischen Behandlung zu unterziehen. Die Hoffnung auf eine " +
+                "Wunderheilung treibt ihn an. Doch stattdessen entdeckt er, dass die gesamte Operation ein " +
+                "teuflischer Betrug ist. Mit einem neuen Ziel vor Augen kehrt der berüchtigte Serienmörder zu seiner "
+                + "Arbeit zurück: Er dreht den Spieß um und zieht die Betrüger auf seine ganz eigene, hinterhältige " +
+                "und" + " raffinierte Art zur Rechenschaft.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+        movies.add(new Movie("Die Monster AG",
+                "In der Monster-AG-Fabrik gehen die Bösewichte eifrig ihrer Arbeit " + "nach: Über Schranktüren " +
+                        "schleichen sie sich in Kinderzimmer ein und sammeln die Angstschreie ihrer " + "Bewohner, " +
+                        "die den Strom für Monstropolis liefern. Ungekrönter Star unter den einfallsreichen " +
+                        "\"Schreckeinjagern\" ist Sully. Dem passiert eines Tages ein folgenschweres Missgeschick: " +
+                        "Das kleine" + " Mädchen Boo, dem er wie gewohnt einen kräftigen Schock versetzen will, " +
+                        "verkrallt sich in sein Fell." + " Als er dann mit dem Kind in die Fabrik zurückkehrt, bricht" +
+                        " das totale Chaos aus...", List.of(GENRE.ANIMATION, GENRE.COMEDY, GENRE.FAMILY)));
+        movies.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
+                "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
+                List.of(GENRE.DOCUMENTARY)));
+
+        // when & then
+    }
+
+    @Test
+    public void a_search_query_with_only_space_characters_has_no_result() {
+
+    }
+
+    @Test
+    public void uppercase_and_lowercase_letters_lead_to_the_same_results() {
+
+    }
+
+    @Test
+    public void a_search_request_with_no_matches_has_no_result() {
+
+    }
+
+    @Test
+    public void a_matching_query_and_title_lead_to_a_result() {
+
+    }
+
+    @Test
+    public void a_matching_query_and_description_lead_to_a_result() {
+
     }
 }

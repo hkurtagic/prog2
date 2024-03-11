@@ -1,10 +1,12 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Movie implements Comparable<Movie> {
     private String title;
@@ -12,6 +14,8 @@ public class Movie implements Comparable<Movie> {
 
     // TODO add more properties here
     private List<GENRE> genres;
+
+    static List<Movie> movies = new ArrayList<>();
 
     public Movie(String title, String description, List<GENRE> genres) {
         this.title = title;
@@ -32,7 +36,6 @@ public class Movie implements Comparable<Movie> {
     }
 
     public static List<Movie> initializeMovies() {
-        List<Movie> movies = new ArrayList<>();
 
         // TODO add some dummy data here
         movies.add(new Movie("SAW X", "The film sees John Kramer (Bell) travelling to Mexico in hopes that an " +
@@ -97,10 +100,6 @@ public class Movie implements Comparable<Movie> {
         return movies;
     }
 
-    public static void main(String[] args) {
-        System.out.println(Movie.initializeMovies());
-    }
-
     public static void sort(List<Movie> movieList) {
         movieList.sort(Movie::compareTo);
     }
@@ -122,4 +121,40 @@ public class Movie implements Comparable<Movie> {
         }
         return 0;
     }
+
+
+    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
+        List<Movie> searchResults = new ArrayList<>();
+
+        System.out.println("Schleifenergebenis\n");
+
+        if (searchQuery.isEmpty()) {
+            observalbeMovies.addAll(allMovies);
+        } else {
+
+            for (Movie movie : observalbeMovies) {
+                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    searchResults.add(movie);
+                    System.out.println(movie.getTitle());
+                }
+            }
+
+            // terminal output of search results
+            System.out.println("\nSearch-Results\n");
+            for (Movie movie : searchResults) {
+                System.out.println(movie.getTitle());
+            }
+
+            observalbeMovies.clear();
+            observalbeMovies.addAll(searchResults);
+        }
+    }
+
+
+
+
+
+
+
+
 }
