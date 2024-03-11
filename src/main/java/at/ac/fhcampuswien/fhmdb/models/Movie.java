@@ -123,7 +123,7 @@ public class Movie implements Comparable<Movie> {
     }
 
 
-    public static List<Movie> search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
+    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
         List<Movie> searchResults = new ArrayList<>();
 
         System.out.println("Schleifenergebenis\n");
@@ -132,7 +132,7 @@ public class Movie implements Comparable<Movie> {
             observalbeMovies.addAll(allMovies);
         } else {
 
-            for (Movie movie : observalbeMovies) {
+            for (Movie movie : allMovies) {
                 if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
                     searchResults.add(movie);
                     System.out.println(movie.getTitle());
@@ -148,8 +148,6 @@ public class Movie implements Comparable<Movie> {
             observalbeMovies.clear();
             observalbeMovies.addAll(searchResults);
         }
-
-        return searchResults;
     }
 
 
