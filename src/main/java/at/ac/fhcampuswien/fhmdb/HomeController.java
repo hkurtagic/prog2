@@ -51,7 +51,7 @@ public class HomeController implements Initializable {
         }
         genreComboBox.getItems().addAll(genreList);
 
-        //
+
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
@@ -64,6 +64,12 @@ public class HomeController implements Initializable {
                 sortBtn.setText("Sort (asc)");
                 Movie.sort(observableMovies, "des");
             }
+        });
+
+
+        // Search Button
+        searchBtn.setOnAction(actionEvent -> {
+            Movie.search(observableMovies, searchField.getText(), allMovies);
         });
 
 
