@@ -86,4 +86,9 @@ public class HomeController implements Initializable {
             sortBtn.setText("Sort (asc)");
         }
     }
+    private void clearFilters(ActionEvent actionEvent) {
+        searchField.setText(""); //Löscht den Text aus dem Suchfeld
+        genreComboBox.setValue(null); // Setzt die Auswahl im Genre-ComboBox zurück
+        observableMovies.setAll(allMovies); // Setzt die Liste der Filme auf die ursprüngliche Liste zurück
+    }
 }
