@@ -125,15 +125,13 @@ public class Movie implements Comparable<Movie> {
     }
 
 
-    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
+    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
         List<Movie> searchResults = new ArrayList<>();
 
-        System.out.println("Schleifenergebenis\n");
-
-        if (searchQuery.isEmpty()) {
+        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+            observalbeMovies.clear();
             observalbeMovies.addAll(allMovies);
         } else {
-
             for (Movie movie : allMovies) {
                 if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
                     searchResults.add(movie);
@@ -151,12 +149,4 @@ public class Movie implements Comparable<Movie> {
             observalbeMovies.addAll(searchResults);
         }
     }
-
-
-
-
-
-
-
-
 }
