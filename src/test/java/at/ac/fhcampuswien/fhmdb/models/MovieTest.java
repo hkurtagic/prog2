@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MovieTest {
+public class MovieTest {
 
     @Test
     public void initializeMovies_Method_must_return_a_list_of_Movies() {
@@ -173,13 +173,10 @@ class MovieTest {
     public void an_empty_search_query_has_to_show_all_movies() {
         //given
         String searchQuery = "";
-        List<Movie> movies = new ArrayList<>();
+        List<Movie> expected = new ArrayList<>();
         List<Movie> actual = new ArrayList<>();
-        actual.addAll(movies);
 
-
-
-        movies.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
+        expected.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
                 "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
                 "Special-Forces-Agent, der um " + "seine verschwundene Frau trauert, rekrutiert, um den Creator zu " +
                 "jagen und zu töten. Der Creator, ein" + " schwer fassbarer Architekt einer fortschrittlichen KI, " +
@@ -189,13 +186,13 @@ class MovieTest {
                 "Territoriums … Nur um herauszufinden, dass die weltverändernde Waffe," + " die er zerstören soll, " +
                 "eine KI in Form eines kleinen Kindes ist.", List.of(GENRE.ACTION, GENRE.ADVENTURE,
                 GENRE.SCIENCE_FICTION)));
-        movies.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
+        expected.add(new Movie("SAW X", "Zwischen den Ereignissen von SAW I und II begibt sich John Kramer nach Mexiko,"
                 + " um sich einer experimentellen medizinischen Behandlung zu unterziehen. Die Hoffnung auf eine " +
                 "Wunderheilung treibt ihn an. Doch stattdessen entdeckt er, dass die gesamte Operation ein " +
                 "teuflischer Betrug ist. Mit einem neuen Ziel vor Augen kehrt der berüchtigte Serienmörder zu seiner "
                 + "Arbeit zurück: Er dreht den Spieß um und zieht die Betrüger auf seine ganz eigene, hinterhältige " +
                 "und" + " raffinierte Art zur Rechenschaft.", List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
-        movies.add(new Movie("Die Monster AG",
+        expected.add(new Movie("Die Monster AG",
                 "In der Monster-AG-Fabrik gehen die Bösewichte eifrig ihrer Arbeit " + "nach: Über Schranktüren " +
                         "schleichen sie sich in Kinderzimmer ein und sammeln die Angstschreie ihrer " + "Bewohner, " +
                         "die den Strom für Monstropolis liefern. Ungekrönter Star unter den einfallsreichen " +
@@ -203,38 +200,120 @@ class MovieTest {
                         "Das kleine" + " Mädchen Boo, dem er wie gewohnt einen kräftigen Schock versetzen will, " +
                         "verkrallt sich in sein Fell." + " Als er dann mit dem Kind in die Fabrik zurückkehrt, bricht" +
                         " das totale Chaos aus...", List.of(GENRE.ANIMATION, GENRE.COMEDY, GENRE.FAMILY)));
-        movies.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
+        expected.add(new Movie("Universum", "Die international renommierte ORF-Reihe UNIVERSUM bietet zweimal pro " +
                 "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
                 List.of(GENRE.DOCUMENTARY)));
 
+        actual.addAll(expected);
+
         // when
+        Movie.search(actual,searchQuery,expected);
 
         //then
-       // assertEquals(movies, searchResult);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void a_search_query_with_only_space_characters_has_to_show_all_movies() {
+        // given
+        String searchQuery = "           ";
+        List<Movie> actual = new ArrayList<>();
 
+        actual.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        actual.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        actual.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        List<Movie> expected = new ArrayList<>(actual);
+
+
+        // when
+        Movie.search(actual, searchQuery, expected);
+
+        // then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void uppercase_and_lowercase_letters_lead_to_the_same_results() {
+        //given
+        List<Movie> expected = new ArrayList<>();
+        List<Movie> actualLowercase = new ArrayList<>();
+        List<Movie> actualUppercase = new ArrayList<>();
 
+        String lowercaseQuery = "this is";
+        String uppercaseQuery = "THIS IS";
+
+        expected.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        expected.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        expected.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        // when
+        Movie.search(actualLowercase, lowercaseQuery, expected);
+        Movie.search(actualUppercase, uppercaseQuery, expected);
+
+        // then
+        assertAll("Check if the list of movies is in the right order",
+                () -> assertEquals(expected, actualLowercase),
+                () -> assertEquals(expected, actualUppercase)
+        );
     }
 
     @Test
     public void a_search_request_with_no_matches_has_no_result() {
+        String searchQuery = "abc";
+        List<Movie> actual = new ArrayList<>();
+        List<Movie> expected = new ArrayList<>();
 
+        actual.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        actual.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        actual.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        // when
+        Movie.search(actual, searchQuery, actual);
+
+        // then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void a_matching_query_and_title_lead_to_a_result() {
+        // given
+        String searchQuery = "this is a movie";
+        List<Movie> movieList = new ArrayList<>();
+        List<Movie> expected= new ArrayList<>();
+        List<Movie> actual = new ArrayList<>();
 
+        movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        expected.add(movieList.get(0));
+
+        // when
+        Movie.search(actual, searchQuery, movieList);
+
+        // then
+        assertEquals(expected, actual);
     }
 
     @Test
     public void a_matching_query_and_description_lead_to_a_result() {
+        // given
+        String searchQuery = "this is a description";
+        List<Movie> movieList = new ArrayList<>();
+        List<Movie> expected= new ArrayList<>();
+        List<Movie> actual = new ArrayList<>();
 
+        movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        expected.add(movieList.get(0));
+
+        // when
+        Movie.search(actual, searchQuery, movieList);
+
+        // then
+        assertEquals(expected, actual);
     }
 }
