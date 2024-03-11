@@ -123,7 +123,7 @@ public class Movie implements Comparable<Movie> {
     }
 
 
-    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
+    public static List<Movie> search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {
         List<Movie> searchResults = new ArrayList<>();
 
         System.out.println("Schleifenergebenis\n");
@@ -148,6 +148,8 @@ public class Movie implements Comparable<Movie> {
             observalbeMovies.clear();
             observalbeMovies.addAll(searchResults);
         }
+
+        return searchResults;
     }
 
 

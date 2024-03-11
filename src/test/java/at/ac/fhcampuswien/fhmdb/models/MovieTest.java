@@ -202,11 +202,15 @@ class MovieTest {
                 "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
                 List.of(GENRE.DOCUMENTARY)));
 
-        // when & then
+        // when
+        List <Movie> searchResult = Movie.search(new ArrayList<>(movies), searchQuery, movies);
+
+        //then
+        assertEquals(movies, searchResult);
     }
 
     @Test
-    public void a_search_query_with_only_space_characters_has_no_result() {
+    public void a_search_query_with_only_space_characters_has_to_show_all_movies() {
 
     }
 
