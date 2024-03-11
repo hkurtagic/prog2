@@ -14,10 +14,11 @@ import javafx.scene.control.TextField;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.Comparator;
+import javafx.event.ActionEvent;
 
 public class HomeController implements Initializable {
     @FXML
@@ -41,37 +42,48 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
+        observableMovies.addAll(allMovies); // Füge alle Filme zur beobachtbaren Liste hinzu
 
-        // initialize UI stuff
-        movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+        movieListView.setItems(observableMovies); // Setze die Daten der beobachtbaren Liste in die ListView
+        movieListView.setCellFactory(movieListView -> new MovieCell()); // Verwende eine benutzerdefinierte Zellenfabrik zur Anzeige der Daten
 
-        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         List<String> genreList = new ArrayList<>();
-        for (GENRE genre:List.of(GENRE.values())) {
+        for (GENRE genre : GENRE.values()) {
             genreList.add(genre.toString().replaceAll("_", " "));
         }
         genreComboBox.getItems().addAll(genreList);
-        //List<String> genres = allMovies.stream().map
-        //(Movie::gen).distinct().collect(Collectors.toList());
-        //genreComboBox.getItems().addAll(genres);
-        genreComboBox.setPromptText("Filter by Genre");genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.setPromptText("Filter by Genre");
 
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
+        searchBtn.setOnAction(this::filterMovies);
+        sortBtn.setOnAction(this::sortMovies);
 
-        // Sort button example:
-        sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                // TODO sort observableMovies ascending
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // TODO sort observableMovies descending
-                sortBtn.setText("Sort (asc)");
-            }
-        });
+        sortBtn.setText("Sort (asc)");
+    }
 
+    private void filterMovies(ActionEvent actionEvent) {
+        String searchQuery = searchField.getText().toLowerCase();
+        String selectedGenreStr = genreComboBox.getValue();
+        GENRE selectedGenre = null;
+        if (selectedGenreStr != null && !selectedGenreStr.isEmpty()) {
+            selectedGenre = GENRE.valueOf(selectedGenreStr.replaceAll(" ", "_").toUpperCase());
+        }
 
+        GENRE finalSelectedGenre = selectedGenre;
+        List<Movie> filteredMovies = allMovies.stream()
+                .filter(movie -> (searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery) || movie.getDescription().toLowerCase().contains(searchQuery))
+                        && (finalSelectedGenre == null || movie.getGenre().contains(finalSelectedGenre)))
+                .collect(Collectors.toList());
+
+        observableMovies.setAll(filteredMovies); // Aktualisiere die beobachtbare Liste mit gefilterten Filmen
+    }
+
+    private void sortMovies(ActionEvent actionEvent) {
+        if (sortBtn.getText().equals("Sort (asc)")) {
+            observableMovies.sort(Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER));
+            sortBtn.setText("Sort (desc)");
+        } else {
+            observableMovies.sort(Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER).reversed());
+            sortBtn.setText("Sort (asc)");
+        }
     }
 }
