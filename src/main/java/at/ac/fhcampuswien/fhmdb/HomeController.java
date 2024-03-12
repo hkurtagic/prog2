@@ -31,6 +31,9 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
+    @FXML
+    public JFXButton clearBtn;
+
     public List<Movie> allMovies = Movie.initializeMovies();
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
@@ -69,9 +72,12 @@ public class HomeController implements Initializable {
 
         // Search Button
         searchBtn.setOnAction(actionEvent -> {
-            Movie.search(observableMovies, searchField.getText(), allMovies);
+            Movie.search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
         });
 
+        clearBtn.setOnAction(actionEvent -> {
+            genreComboBox.setValue(null);
+        });
 
     }
 }
