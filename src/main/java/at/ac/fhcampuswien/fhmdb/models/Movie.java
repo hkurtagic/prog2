@@ -4,6 +4,8 @@ import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,7 +15,7 @@ public class Movie implements Comparable<Movie> {
     private String description;
 
     // TODO add more properties here
-    private List<GENRE> genres;
+    private List<GENRE> genres; // Die Genre-Liste für den Film
 
     static List<Movie> movies = new ArrayList<>();
 
