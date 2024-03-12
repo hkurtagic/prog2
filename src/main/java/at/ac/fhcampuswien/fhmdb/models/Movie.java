@@ -149,4 +149,72 @@ public class Movie implements Comparable<Movie> {
             observalbeMovies.addAll(searchResults);
         }
     }
+
+    public static void filterGenre(List<Movie> observableMovies, String genre, List<Movie> allMovies) {
+        if (genre == null) {
+            observableMovies.clear();
+            observableMovies.addAll(allMovies);
+        } else {
+            List<Movie> searchResult = new ArrayList<>();
+
+            for (Movie movie:allMovies) {
+                List<String> genreList = new ArrayList<>();
+                movie.getGenre().forEach(g -> genreList.add(g.toString()));
+                if (genreList.contains(genre)) searchResult.add(movie);
+            }
+
+            observableMovies.clear();
+            observableMovies.addAll(searchResult);
+        }
+    }
+
+    public static void search(List<Movie> observalbeMovies, String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
+        List<Movie> searchResults = new ArrayList<>();
+
+        if (genre == null) {
+            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+                observalbeMovies.clear();
+                observalbeMovies.addAll(allMovies);
+            } else {
+                for (Movie movie : allMovies) {
+                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                        searchResults.add(movie);
+                        System.out.println(movie.getTitle());
+                    }
+                }
+
+                // terminal output of search results
+                System.out.println("\nSearch-Results\n");
+                for (Movie movie : searchResults) {
+                    System.out.println(movie.getTitle());
+                }
+
+                observalbeMovies.clear();
+                observalbeMovies.addAll(searchResults);
+            }
+        } else {
+            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+                observalbeMovies.clear();
+                filterGenre(observalbeMovies, genre, allMovies);
+            } else {
+                for (Movie movie : allMovies) {
+                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                        searchResults.add(movie);
+                        System.out.println(movie.getTitle());
+                    }
+                }
+
+                filterGenre(searchResults, genre, searchResults);
+
+                // terminal output of search results
+                System.out.println("\nSearch-Results\n");
+                for (Movie movie : searchResults) {
+                    System.out.println(movie.getTitle());
+                }
+
+                observalbeMovies.clear();
+                observalbeMovies.addAll(searchResults);
+            }
+        }
+    }
 }

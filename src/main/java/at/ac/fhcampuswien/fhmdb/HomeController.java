@@ -36,6 +36,9 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
+    @FXML
+    public JFXButton clearBtn;
+
     public List<Movie> allMovies = Movie.initializeMovies();
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
@@ -67,16 +70,16 @@ public class HomeController implements Initializable {
         if (selectedGenreStr != null && !selectedGenreStr.isEmpty()) {
             selectedGenre = GENRE.valueOf(selectedGenreStr.replaceAll(" ", "_").toUpperCase());
         }
+      
+        // Search Button
+        searchBtn.setOnAction(actionEvent -> {
+            Movie.search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+        });
 
-        GENRE finalSelectedGenre = selectedGenre;
-        List<Movie> filteredMovies = allMovies.stream()
-                .filter(movie -> (searchQuery.isEmpty() || movie.getTitle().toLowerCase().contains(searchQuery) || movie.getDescription().toLowerCase().contains(searchQuery))
-                        && (finalSelectedGenre == null || movie.getGenre().contains(finalSelectedGenre)))
-                .collect(Collectors.toList());
-
-        observableMovies.setAll(filteredMovies); // Aktualisiere die beobachtbare Liste mit gefilterten Filmen
-    }
-
+        clearBtn.setOnAction(actionEvent -> {
+            genreComboBox.setValue(null);
+        });
+      
     private void sortMovies(ActionEvent actionEvent) {
         if (sortBtn.getText().equals("Sort (asc)")) {
             observableMovies.sort(Comparator.comparing(Movie::getTitle, String.CASE_INSENSITIVE_ORDER));
