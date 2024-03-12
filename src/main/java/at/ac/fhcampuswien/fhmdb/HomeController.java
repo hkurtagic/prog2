@@ -77,6 +77,7 @@ public class HomeController implements Initializable {
 
         clearBtn.setOnAction(actionEvent -> {
             genreComboBox.setValue(null);
+            Movie.search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
         });
 
     }

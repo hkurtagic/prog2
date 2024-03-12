@@ -1,22 +1,15 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import java.util.ArrayList;
-import java.util.List;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Movie implements Comparable<Movie> {
     private String title;
     private String description;
-
-    // TODO add more properties here
     private List<GENRE> genres; // Die Genre-Liste für den Film
-
     static List<Movie> movies = new ArrayList<>();
 
     public Movie(String title, String description, List<GENRE> genres) {
@@ -39,7 +32,6 @@ public class Movie implements Comparable<Movie> {
 
     public static List<Movie> initializeMovies() {
 
-        // TODO add some dummy data here
         movies.add(new Movie("SAW X", "The film sees John Kramer (Bell) travelling to Mexico in hopes that an " +
                                       "experimental procedure may cure his terminal cancer. John later discovers that" +
                                       " the operation is a " + "scam, prompting him to kidnap those responsible and " +
@@ -125,7 +117,8 @@ public class Movie implements Comparable<Movie> {
     }
 
 
-    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
+    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {    //
+        // allMovies is the Movie base which will be searched through
         List<Movie> searchResults = new ArrayList<>();
 
         if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
@@ -157,7 +150,7 @@ public class Movie implements Comparable<Movie> {
         } else {
             List<Movie> searchResult = new ArrayList<>();
 
-            for (Movie movie:allMovies) {
+            for (Movie movie : allMovies) {
                 List<String> genreList = new ArrayList<>();
                 movie.getGenre().forEach(g -> genreList.add(g.toString()));
                 if (genreList.contains(genre)) searchResult.add(movie);
@@ -170,28 +163,8 @@ public class Movie implements Comparable<Movie> {
 
     public static void search(List<Movie> observalbeMovies, String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
         List<Movie> searchResults = new ArrayList<>();
-
         if (genre == null) {
-            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-                observalbeMovies.clear();
-                observalbeMovies.addAll(allMovies);
-            } else {
-                for (Movie movie : allMovies) {
-                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                        searchResults.add(movie);
-                        System.out.println(movie.getTitle());
-                    }
-                }
-
-                // terminal output of search results
-                System.out.println("\nSearch-Results\n");
-                for (Movie movie : searchResults) {
-                    System.out.println(movie.getTitle());
-                }
-
-                observalbeMovies.clear();
-                observalbeMovies.addAll(searchResults);
-            }
+            search(observalbeMovies, searchQuery, allMovies);
         } else {
             if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
                 observalbeMovies.clear();
