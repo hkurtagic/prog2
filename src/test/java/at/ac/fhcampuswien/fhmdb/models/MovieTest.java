@@ -316,4 +316,40 @@ public class MovieTest {
         // then
         assertEquals(expected, actual);
     }
+
+    /*
+     * GENRE FILTER
+     */
+    @Test
+    public void no_genre_selected_results_in_all_movies_shown() {
+        List<Movie> movieList = new ArrayList<>();
+
+        movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ANIMATION)));
+        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.FANTASY)));
+
+        List<Movie> actual = new ArrayList<>(movieList);
+        List<Movie> expected = new ArrayList<>(movieList);
+
+        Movie.filterGenre(actual, null, movieList);
+
+        assertEquals(actual, expected);
+    }
+
+    @Test
+    public void a_genre_selected_results_in_all_movies_with_genre_shown() {
+        List<Movie> movieList = new ArrayList<>();
+
+        movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ANIMATION)));
+        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.FANTASY)));
+        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+
+        List<Movie> actual = new ArrayList<>(movieList);
+        List<Movie> expected = List.of(movieList.get(0), movieList.get(3));
+
+        Movie.filterGenre(actual, "ADVENTURE", movieList);
+
+        assertEquals(actual, expected);
+    }
 }
