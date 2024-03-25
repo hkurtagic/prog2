@@ -3,7 +3,6 @@ package at.ac.fhcampuswien.fhmdb.models;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Movie implements Comparable<Movie> {
@@ -94,19 +93,6 @@ public class Movie implements Comparable<Movie> {
         return movies;
     }
 
-    public static void sort(List<Movie> movieList) {
-        movieList.sort(Movie::compareTo);
-    }
-
-    public static void sort(List<Movie> movieList, String order) {
-        if (order.equals("des")) {
-            movieList.sort(Movie::compareTo);
-            Collections.reverse(movieList);
-        } else {
-            movieList.sort(Movie::compareTo);
-        }
-    }
-
     @Override
     public int compareTo(Movie movie) {
         for (int i = 0; i < movie.getTitle().length(); i++) {
@@ -117,77 +103,4 @@ public class Movie implements Comparable<Movie> {
     }
 
 
-    public static void search(List<Movie> observalbeMovies, String searchQuery, List<Movie> allMovies) {    //
-        // allMovies is the Movie base which will be searched through
-        List<Movie> searchResults = new ArrayList<>();
-
-        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-            observalbeMovies.clear();
-            observalbeMovies.addAll(allMovies);
-        } else {
-            for (Movie movie : allMovies) {
-                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                    searchResults.add(movie);
-                    System.out.println(movie.getTitle());
-                }
-            }
-
-            // terminal output of search results
-            System.out.println("\nSearch-Results\n");
-            for (Movie movie : searchResults) {
-                System.out.println(movie.getTitle());
-            }
-
-            observalbeMovies.clear();
-            observalbeMovies.addAll(searchResults);
-        }
-    }
-
-    public static void filterGenre(List<Movie> observableMovies, String genre, List<Movie> allMovies) {
-        if (genre == null) {
-            observableMovies.clear();
-            observableMovies.addAll(allMovies);
-        } else {
-            List<Movie> searchResult = new ArrayList<>();
-
-            for (Movie movie : allMovies) {
-                List<String> genreList = new ArrayList<>();
-                movie.getGenre().forEach(g -> genreList.add(g.toString()));
-                if (genreList.contains(genre)) searchResult.add(movie);
-            }
-
-            observableMovies.clear();
-            observableMovies.addAll(searchResult);
-        }
-    }
-
-    public static void search(List<Movie> observalbeMovies, String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
-        List<Movie> searchResults = new ArrayList<>();
-        if (genre == null) {
-            search(observalbeMovies, searchQuery, allMovies);
-        } else {
-            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-                observalbeMovies.clear();
-                filterGenre(observalbeMovies, genre, allMovies);
-            } else {
-                for (Movie movie : allMovies) {
-                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                        searchResults.add(movie);
-                        System.out.println(movie.getTitle());
-                    }
-                }
-
-                filterGenre(searchResults, genre, searchResults);
-
-                // terminal output of search results
-                System.out.println("\nSearch-Results\n");
-                for (Movie movie : searchResults) {
-                    System.out.println(movie.getTitle());
-                }
-
-                observalbeMovies.clear();
-                observalbeMovies.addAll(searchResults);
-            }
-        }
-    }
 }

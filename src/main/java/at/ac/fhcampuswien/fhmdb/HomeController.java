@@ -62,23 +62,107 @@ public class HomeController implements Initializable {
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
                 sortBtn.setText("Sort (desc)");
-                Movie.sort(observableMovies, "asc");
+                sort(observableMovies, "asc");
             } else {
                 sortBtn.setText("Sort (asc)");
-                Movie.sort(observableMovies, "des");
+                sort(observableMovies, "des");
             }
         });
 
 
         // Search Button
         searchBtn.setOnAction(actionEvent -> {
-            Movie.search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            List<Movie> result = search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            observableMovies.clear();
+            observableMovies.addAll(result);
         });
 
         clearBtn.setOnAction(actionEvent -> {
             genreComboBox.setValue(null);
-            Movie.search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            List<Movie> result = search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            observableMovies.clear();
+            observableMovies.addAll(result);
         });
 
+    }
+
+    public static List<Movie> search(String searchQuery, List<Movie> allMovies) {    //
+        // allMovies is the Movie base which will be searched through
+        List<Movie> searchResults = new ArrayList<>();
+
+        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+            searchResults.addAll(allMovies);
+        } else {
+            for (Movie movie : allMovies) {
+                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    searchResults.add(movie);
+                    System.out.println(movie.getTitle());
+                }
+            }
+
+            // terminal output of search results
+            System.out.println("\nSearch-Results\n");
+            for (Movie movie : searchResults) {
+                System.out.println(movie.getTitle());
+            }
+
+        }
+        return searchResults;
+    }
+
+    public static List<Movie> filterGenre(List<Movie> observableMovies, String genre, List<Movie> allMovies) {
+        if (genre == null) {
+            return allMovies;
+        } else {
+            List<Movie> searchResult = new ArrayList<>();
+
+            for (Movie movie : allMovies) {
+                List<String> genreList = new ArrayList<>();
+                movie.getGenre().forEach(g -> genreList.add(g.toString()));
+                if (genreList.contains(genre)) searchResult.add(movie);
+            }
+
+            return searchResult;
+        }
+    }
+
+    public static List<Movie> search(List<Movie> observalbeMovies, String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
+        List<Movie> searchResults = new ArrayList<>();
+        if (genre == null) {
+            searchResults.addAll(search(searchQuery, allMovies));
+        } else {
+            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+                searchResults.addAll(filterGenre(observalbeMovies, genre, allMovies));
+            } else {
+                for (Movie movie : allMovies) {
+                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                        searchResults.add(movie);
+                        System.out.println(movie.getTitle());
+                    }
+                }
+
+                searchResults.addAll(filterGenre(searchResults, genre, searchResults));
+
+                // terminal output of search results
+                System.out.println("\nSearch-Results\n");
+                for (Movie movie : searchResults) {
+                    System.out.println(movie.getTitle());
+                }
+            }
+        }
+        return searchResults;
+    }
+
+    public static void sort(List<Movie> movieList) {
+        movieList.sort(Movie::compareTo);
+    }
+
+    public static void sort(List<Movie> movieList, String order) {
+        if (order.equals("des")) {
+            movieList.sort(Movie::compareTo);
+            Collections.reverse(movieList);
+        } else {
+            movieList.sort(Movie::compareTo);
+        }
     }
 }
