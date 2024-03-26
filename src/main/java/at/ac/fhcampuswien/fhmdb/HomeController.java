@@ -75,7 +75,6 @@ public class HomeController implements Initializable {
             List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
             observableMovies.clear();
             observableMovies.addAll(result);
-            result.stream().forEach(e -> System.out.println(e.getTitle()));
         });
 
         // clear button
