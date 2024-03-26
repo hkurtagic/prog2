@@ -75,6 +75,7 @@ public class HomeController implements Initializable {
             List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
             observableMovies.clear();
             observableMovies.addAll(result);
+            result.stream().forEach(e -> System.out.println(e.getTitle()));
         });
 
         // clear button
@@ -89,31 +90,6 @@ public class HomeController implements Initializable {
     }
 
 
-    /*
-     * The following search method only covers the search function without filters
-     */
-    public static List<Movie> unfilteredSearch(String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
-        List<Movie> searchResults = new ArrayList<>();
-
-        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-            searchResults.addAll(allMovies);
-        } else {
-            for (Movie movie : allMovies) {
-                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                    searchResults.add(movie);
-                    System.out.println(movie.getTitle());
-                }
-            }
-
-            // terminal output of search results
-            System.out.println("\nSearch-Results\n");
-            for (Movie movie : searchResults) {
-                System.out.println(movie.getTitle());
-            }
-
-        }
-        return searchResults;
-    }
 
 
     public static List<Movie> filterGenre(String genre, List<Movie> allMovies) {
@@ -134,6 +110,32 @@ public class HomeController implements Initializable {
             return searchResult;
 
         }
+    }
+
+    /*
+     * The following search method only covers the search function without filters
+     */
+
+    public static List<Movie> unfilteredSearch(String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
+        List<Movie> searchResults = new ArrayList<>();
+        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
+            searchResults.addAll(allMovies);
+        } else {
+            for (Movie movie : allMovies) {
+                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
+                    searchResults.add(movie);
+                    System.out.println(movie.getTitle());
+                }
+            }
+
+            // terminal output of search results
+            System.out.println("\nSearch-Results\n");
+            for (Movie movie : searchResults) {
+                System.out.println(movie.getTitle());
+            }
+
+        }
+        return searchResults;
     }
 
     /*
@@ -158,7 +160,9 @@ public class HomeController implements Initializable {
                 }
 
                 // then filter search results
-                searchResults.addAll(filterGenre(genre, searchResults));
+                List<Movie> result = filterGenre(genre, searchResults);
+                searchResults.clear();
+                searchResults.addAll(result);
 
                 // terminal output of search results
                 System.out.println("\nSearch-Results\n");
