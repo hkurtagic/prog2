@@ -58,7 +58,7 @@ public class HomeController implements Initializable {
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
 
-        // Sort button example:
+        // sort button
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
                 sortBtn.setText("Sort (desc)");
@@ -69,25 +69,30 @@ public class HomeController implements Initializable {
             }
         });
 
-
-        // Search Button
+        // search button
         searchBtn.setOnAction(actionEvent -> {
-            List<Movie> result = search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            // call of search method which also filters by genre
+            List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
             observableMovies.clear();
             observableMovies.addAll(result);
         });
 
+        // clear button
         clearBtn.setOnAction(actionEvent -> {
+            // unset selected genre
             genreComboBox.setValue(null);
-            List<Movie> result = search(observableMovies, searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            // call of search method which also filters by genre
+            List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
             observableMovies.clear();
             observableMovies.addAll(result);
         });
-
     }
 
-    public static List<Movie> search(String searchQuery, List<Movie> allMovies) {    //
-        // allMovies is the Movie base which will be searched through
+
+    /*
+     * The following search method only covers the search function without filters
+     */
+    public static List<Movie> unfilteredSearch(String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
         List<Movie> searchResults = new ArrayList<>();
 
         if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
@@ -110,7 +115,8 @@ public class HomeController implements Initializable {
         return searchResults;
     }
 
-    public static List<Movie> filterGenre(List<Movie> observableMovies, String genre, List<Movie> allMovies) {
+
+    public static List<Movie> filterGenre(String genre, List<Movie> allMovies) {
         if (genre == null) {
             return allMovies;
         } else {
@@ -118,22 +124,32 @@ public class HomeController implements Initializable {
 
             for (Movie movie : allMovies) {
                 List<String> genreList = new ArrayList<>();
+
+                // add Genres as a String to genreList
                 movie.getGenre().forEach(g -> genreList.add(g.toString()));
+
                 if (genreList.contains(genre)) searchResult.add(movie);
             }
 
             return searchResult;
+
         }
     }
 
-    public static List<Movie> search(List<Movie> observalbeMovies, String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
+    /*
+     *  The following search method combines search and filter functionality
+     */
+    public static List<Movie> filteredSearch(String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
         List<Movie> searchResults = new ArrayList<>();
         if (genre == null) {
-            searchResults.addAll(search(searchQuery, allMovies));
+            // call of normal search method
+            searchResults.addAll(unfilteredSearch(searchQuery, allMovies));
         } else {
             if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-                searchResults.addAll(filterGenre(observalbeMovies, genre, allMovies));
+                // call of filter method
+                searchResults.addAll(filterGenre(genre, allMovies));
             } else {
+                // first do the search algorithm
                 for (Movie movie : allMovies) {
                     if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
                         searchResults.add(movie);
@@ -141,7 +157,8 @@ public class HomeController implements Initializable {
                     }
                 }
 
-                searchResults.addAll(filterGenre(searchResults, genre, searchResults));
+                // then filter search results
+                searchResults.addAll(filterGenre(genre, searchResults));
 
                 // terminal output of search results
                 System.out.println("\nSearch-Results\n");
@@ -151,10 +168,6 @@ public class HomeController implements Initializable {
             }
         }
         return searchResults;
-    }
-
-    public static void sort(List<Movie> movieList) {
-        movieList.sort(Movie::compareTo);
     }
 
     public static void sort(List<Movie> movieList, String order) {

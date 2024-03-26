@@ -61,7 +61,7 @@ public class MovieTest {
                 List.of(GENRE.DOCUMENTARY)));
 
         //when
-        Movie.sort(movies);
+        HomeController.sort(movies, "");     // TODO: @HARIS KÖNNTEST DU DAS BITTE REVIEWEN?
 
         //then
         assertAll("Check if the list of movies is in the right order",
@@ -107,7 +107,7 @@ public class MovieTest {
                 List.of(GENRE.DOCUMENTARY)));
 
         //when
-        Movie.sort(movies, "asc");
+        HomeController.sort(movies, "asc");
 
         //then
         assertAll("Check if the list of movies is in the right order",
@@ -153,7 +153,7 @@ public class MovieTest {
                 List.of(GENRE.DOCUMENTARY)));
 
         //when
-        Movie.sort(movies, "des");
+        HomeController.sort(movies, "des");
 
         //then
         assertAll("Check if the list of movies is in the right order",
@@ -173,7 +173,7 @@ public class MovieTest {
         //given
         String searchQuery = "";
         List<Movie> expected = new ArrayList<>();
-        List<Movie> actual = new ArrayList<>();
+        List<Movie> actual;
 
         expected.add(new Movie("The Creator", "Inmitten eines künftigen Krieges zwischen der Menschheit und den " +
                 "Kräften" + " der künstlichen Intelligenz wird Joshua, ein abgeklärter ehemaliger " +
@@ -203,10 +203,8 @@ public class MovieTest {
                 "Woche" + " eindrucksvolle und qualitativ hochwertige Dokumentationen aus aller Welt.",
                 List.of(GENRE.DOCUMENTARY)));
 
-        actual.addAll(expected);
-
         // when
-        Movie.search(actual, searchQuery, expected);
+        actual = HomeController.unfilteredSearch(searchQuery, expected);
 
         //then
         assertEquals(expected, actual);
@@ -216,17 +214,16 @@ public class MovieTest {
     public void a_search_query_with_only_space_characters_has_to_show_all_movies() {
         // given
         String searchQuery = "           ";
-        List<Movie> actual = new ArrayList<>();
 
-        actual.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
-        actual.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
-        actual.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+        List<Movie> expected = new ArrayList<>();
+        List<Movie> actual;
 
-        List<Movie> expected = new ArrayList<>(actual);
-
+        expected.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
+        expected.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
+        expected.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
 
         // when
-        Movie.search(actual, searchQuery, expected);
+        actual = HomeController.unfilteredSearch(searchQuery, expected);
 
         // then
         assertEquals(expected, actual);
@@ -236,8 +233,8 @@ public class MovieTest {
     public void uppercase_and_lowercase_letters_lead_to_the_same_results() {
         //given
         List<Movie> expected = new ArrayList<>();
-        List<Movie> actualLowercase = new ArrayList<>();
-        List<Movie> actualUppercase = new ArrayList<>();
+        List<Movie> actualLowercase;
+        List<Movie> actualUppercase;
 
         String lowercaseQuery = "this is";
         String uppercaseQuery = "THIS IS";
@@ -247,8 +244,8 @@ public class MovieTest {
         expected.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
 
         // when
-        Movie.search(actualLowercase, lowercaseQuery, expected);
-        Movie.search(actualUppercase, uppercaseQuery, expected);
+       actualLowercase = HomeController.unfilteredSearch(lowercaseQuery, expected);
+       actualUppercase = HomeController.unfilteredSearch(uppercaseQuery, expected);
 
         // then
         assertAll("Check if the list of movies is in the right order",
@@ -260,15 +257,15 @@ public class MovieTest {
     @Test
     public void a_search_request_with_no_matches_has_no_result() {
         String searchQuery = "abc";
-        List<Movie> actual = new ArrayList<>();
         List<Movie> expected = new ArrayList<>();
+        List<Movie> actual = new ArrayList<>();
 
         actual.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
         actual.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
         actual.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
 
         // when
-        Movie.search(actual, searchQuery, actual);
+        actual = HomeController.unfilteredSearch(searchQuery, actual);
 
         // then
         assertEquals(expected, actual);
@@ -289,7 +286,7 @@ public class MovieTest {
         expected.add(movieList.get(0));
 
         // when
-        Movie.search(actual, searchQuery, movieList);
+       actual = HomeController.unfilteredSearch(searchQuery, movieList);
 
         // then
         assertEquals(expected, actual);
@@ -301,7 +298,7 @@ public class MovieTest {
         String searchQuery = "this is a description";
         List<Movie> movieList = new ArrayList<>();
         List<Movie> expected = new ArrayList<>();
-        List<Movie> actual = new ArrayList<>();
+        List<Movie> actual;
 
         movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
         movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ADVENTURE)));
@@ -310,51 +307,55 @@ public class MovieTest {
         expected.add(movieList.get(0));
 
         // when
-        Movie.search(actual, searchQuery, movieList);
+        actual = HomeController.unfilteredSearch(searchQuery, movieList);
 
         // then
         assertEquals(expected, actual);
     }
 
+
+
     /*
-     * GENRE FILTER
+     * * * * * * * * GENRE FILTER * * * * * * * * * * * * * *
      */
+
     @Test
     public void no_genre_selected_results_in_all_movies_shown() {
         List<Movie> movieList = new ArrayList<>();
+        String searchQuery = "";
 
         movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
-        movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ANIMATION)));
+        movieList.add(new Movie("This is another movie", "This is another description", List.of(GENRE.ANIMATION)));
         movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.FANTASY)));
 
-        List<Movie> actual = new ArrayList<>(movieList);
         List<Movie> expected = new ArrayList<>(movieList);
 
-        Movie.filterGenre(actual, null, movieList);
+        List<Movie> actual =  HomeController.filteredSearch(searchQuery, null, movieList);
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
+
 
     @Test
     public void a_movie_with_matching_genre_and_a_search_query_should_be_displayed() {
         List<Movie> movieList = new ArrayList<>();
+        String searchQuery = "This is a movie";
 
         movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
         movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ANIMATION)));
-        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.FANTASY)));
-        movieList.add(new Movie("This is a third movie", "This is a third description", List.of(GENRE.ADVENTURE)));
+        movieList.add(new Movie("This is also a movie", "This is a third description", List.of(GENRE.FANTASY)));
 
-        List<Movie> actual = new ArrayList<>(movieList);
         List<Movie> expected = List.of(movieList.get(0));
 
-        Movie.search(actual, "a Movie", "ADVENTURE", movieList);
+       List<Movie> actual = HomeController.filteredSearch(searchQuery, "ADVENTURE", movieList);
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 
     @Test
     public void movie_with_a_matching_genre_and_a_search_query_and_sorted_asc_should_be_displayed_correctly() {
         List<Movie> movieList = new ArrayList<>();
+        String searchQuery = "This";
 
         movieList.add(new Movie("This is a movie", "This is a description", List.of(GENRE.ADVENTURE)));
         movieList.add(new Movie("This is a another movie", "This is another description", List.of(GENRE.ANIMATION)));
@@ -364,9 +365,9 @@ public class MovieTest {
         List<Movie> actual = new ArrayList<>(movieList);
         List<Movie> expected = List.of(movieList.get(0),movieList.get(3));
 
-        Movie.search(actual, "Movie", "ADVENTURE", movieList);
-        Movie.sort(movieList, "asc");
+        actual = HomeController.filteredSearch(searchQuery, "ADVENTURE", movieList);
+        HomeController.sort(actual, "asc");
 
-        assertEquals(actual, expected);
+        assertEquals(expected, actual);
     }
 }
