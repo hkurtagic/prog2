@@ -2,95 +2,151 @@ package at.ac.fhcampuswien.fhmdb.models;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Movie implements Comparable<Movie> {
     private String title;
     private String description;
     private List<GENRE> genres; // Die Genre-Liste für den Film
+    private String id;
+    private int releaseYear;
+    private String imgUrl;
+    private int lengthInMinutes;
+    private List<String> directors;
+    private List<String> writers;
+    private List<String> mainCast;
+    private double rating;
+
+
+
     static List<Movie> movies = new ArrayList<>();
 
-    public Movie(String title, String description, List<GENRE> genres) {
+    public Movie(String title, String description, List<GENRE> genres, String id, int releaseYear, String imgUrl, int lengthInMinutes, List<String> directors, List<String> writers, List<String> mainCast, double rating) {
         this.title = title;
         this.description = description;
         this.genres = genres;
+        this.id = id;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.directors = directors;
+        this.writers = writers;
+        this.mainCast = mainCast;
+        this.rating = rating;
     }
+
+    // Getter and setter methods, respectively
+
 
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<GENRE> getGenre() {
+        return genres;
+    }
+
+    public void setGenre(List<GENRE> genres) {
+        this.genres = genres;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public List getGenre() {
-        return genres;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public static List<Movie> initializeMovies() {
+    public String getId() {
+        return id;
+    }
 
-        movies.add(new Movie("SAW X", "The film sees John Kramer (Bell) travelling to Mexico in hopes that an " +
-                                      "experimental procedure may cure his terminal cancer. John later discovers that" +
-                                      " the operation is a " + "scam, prompting him to kidnap those responsible and " +
-                                      "subject them to his trademark death traps as " + "retribution.",
-                List.of(GENRE.HORROR, GENRE.ACTION, GENRE.CRIME)));
+    public void setId(String id) {
+        this.id = id;
+    }
 
-        movies.add(new Movie("Titanic", "A poor boy and a rich girl fall in love on a ship. The ship sinks. He dies."
-                , List.of(GENRE.ROMANCE, GENRE.HISTORY, GENRE.DRAMA)));
+    public int getReleaseYear() {
+        return releaseYear;
+    }
 
-        movies.add(new Movie("IT", "A clown eats children's souls", List.of(GENRE.HORROR, GENRE.COMEDY,
-                GENRE.FANTASY)));
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
 
-        /*
-         * The following 19 lines of Code have been taken from the Internet | https://chat.openai
-         * .com/c/98b82e31-ad26-4efa-bbe3-cc0e2c006586, last visit: 02.03.2024
-         */
-        movies.add(new Movie("The Dark Knight",
-                "A gritty portrayal of Batman facing the Joker's chaotic reign of " + "terror in Gotham City.",
-                List.of(GENRE.ACTION, GENRE.CRIME, GENRE.DRAMA)));
+    public String getImgUrl() {
+        return imgUrl;
+    }
 
-        movies.add(new Movie("Avengers: Endgame",
-                "The epic conclusion to the Avengers saga as they attempt to undo " + "the devastating events caused "
-                + "by the villain Thanos.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
-        movies.add(new Movie("Black Panther",
-                "T'Challa, the king of Wakanda, must defend his nation and the world " + "as" + " the superhero " +
-                "Black" + " Panther.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.SCIENCE_FICTION)));
+    public int getLengthInMinutes() {
+        return lengthInMinutes;
+    }
 
-        movies.add(new Movie("Wonder Woman", "Diana, an Amazonian princess, discovers her true destiny as Wonder " +
-                                             "Woman and faces the challenges of World War I.", List.of(GENRE.ACTION,
-                GENRE.ADVENTURE,
-                GENRE.FANTASY)));
+    public void setLengthInMinutes(int lengthInMinutes) {
+        this.lengthInMinutes = lengthInMinutes;
+    }
 
-        movies.add(new Movie("Spider-Man: Into the Spider-Verse",
-                "Miles Morales discovers the multiverse and teams " + "up with other Spider-People from different " +
-                "dimensions to save all of reality.", List.of(GENRE.ACTION, GENRE.ADVENTURE, GENRE.ANIMATION)));
+    public List<String> getDirectors() {
+        return directors;
+    }
 
-        movies.add(new Movie("The Shawshank Redemption",
-                "A tale of friendship and survival as two imprisoned men " + "bond over several decades, finding " +
-                "solace and redemption in unlikely circumstances.", List.of(GENRE.DRAMA)));
+    public void setDirectors(List<String> directors) {
+        this.directors = directors;
+    }
 
-        movies.add(new Movie("The Grand Budapest Hotel", "A quirky comedy about the misadventures of a hotel " +
-                                                         "concierge and his protege as they become embroiled in a " +
-                                                         "theft and murder mystery.",
-                List.of(GENRE.COMEDY)));
+    public List<String> getWriters() {
+        return writers;
+    }
 
-        movies.add(new Movie("Blade Runner 2049", "In a dystopian future, a blade runner discovers a long-buried " +
-                                                  "secret that has the potential to plunge society into chaos.",
-                List.of(GENRE.SCIENCE_FICTION,
-                        GENRE.THRILLER)));
+    public void setWriters(List<String> writers) {
+        this.writers = writers;
+    }
 
-        movies.add(new Movie("La La Land",
-                "A modern musical about an aspiring actress and a jazz musician who meet " + "and fall in love while "
-                + "pursuing their dreams in Los Angeles.", List.of(GENRE.ROMANCE, GENRE.MUSICAL, GENRE.DRAMA)));
+    public List<String> getMainCast() {
+        return mainCast;
+    }
 
-        movies.add(new Movie("Gone Girl",
-                "A psychological thriller that explores the disappearance of a woman and " + "the media frenzy " +
-                "surrounding the investigation.", List.of(GENRE.MYSTERY, GENRE.DRAMA, GENRE.THRILLER)));
+    public void setMainCast(List<String> mainCast) {
+        this.mainCast = mainCast;
+    }
 
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public static List<Movie> getMovies() {
         return movies;
+    }
+
+    public static void setMovies(List<Movie> movies) {
+        Movie.movies = movies;
+    }
+
+
+    public static List<Movie> initializeMovies() {
+        try {
+            // call movies without any criteria
+            return MovieAPI.fetchMovies(null, null, null, null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 
     @Override
