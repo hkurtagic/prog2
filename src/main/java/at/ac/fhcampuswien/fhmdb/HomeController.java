@@ -12,7 +12,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
@@ -39,7 +38,6 @@ public class HomeController implements Initializable {
     public JFXButton clearBtn;
 
 
-
     // TODO: WIR MÜSSEN DIE BEIDEN COMBOBOXES NOCH IN DIE UI IN SCENE BUILDER EINFÜGEN!!!
     @FXML
     public JFXComboBox<Integer> releaseYearComboBox;
@@ -49,7 +47,8 @@ public class HomeController implements Initializable {
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically
+    // updates corresponding UI elements when underlying data changes
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -62,7 +61,7 @@ public class HomeController implements Initializable {
         // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.setPromptText("Filter by Genre");
         List<String> genreList = new ArrayList<>();
-        for (GENRE genre:List.of(GENRE.values())) {
+        for (GENRE genre : List.of(GENRE.values())) {
             genreList.add(genre.toString().replaceAll("_", " "));
         }
         genreComboBox.getItems().addAll(genreList);
@@ -71,12 +70,12 @@ public class HomeController implements Initializable {
         ratingComboBox.setPromptText("Filter by Rating");
 
         List<Integer> releaseYearList = new ArrayList<>();
-        observableMovies.stream().filter(m -> !releaseYearList.contains(m.getReleaseYear())).forEach((Movie m) -> releaseYearList.add(m.getReleaseYear()));
+        observableMovies.stream().filter(m -> ! releaseYearList.contains(m.getReleaseYear())).forEach((Movie m) -> releaseYearList.add(m.getReleaseYear()));
         Collections.sort(releaseYearList);
         releaseYearComboBox.getItems().addAll(releaseYearList);
 
         List<Double> ratingList = new ArrayList<>();
-        observableMovies.stream().filter(m -> !ratingList.contains(m.getRating())).forEach((Movie m) -> ratingList.add(m.getRating()));
+        observableMovies.stream().filter(m -> ! ratingList.contains(m.getRating())).forEach((Movie m) -> ratingList.add(m.getRating()));
         Collections.sort(ratingList);
         ratingComboBox.getItems().addAll((ratingList));
 
@@ -85,7 +84,7 @@ public class HomeController implements Initializable {
 
         // sort button
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
+            if (sortBtn.getText().equals("Sort (asc)")) {
                 sortBtn.setText("Sort (desc)");
                 sort(observableMovies, "asc");
             } else {
@@ -105,7 +104,7 @@ public class HomeController implements Initializable {
 
             List<Movie> result = null;
             try {
-                result = MovieAPI.fetchMovies(searchQuery.isBlank() ? null : searchQuery, genre, releaseYear, rating );
+                result = MovieAPI.fetchMovies(searchQuery.isBlank() ? null : searchQuery, genre, releaseYear, rating);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -113,7 +112,7 @@ public class HomeController implements Initializable {
             observableMovies.addAll(result);
 
             List<Integer> tempReleaseYear = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
+            observableMovies.stream().filter(m -> ! tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
             Collections.sort(tempReleaseYear);
             releaseYearComboBox.getItems().clear();
             releaseYearComboBox.getItems().addAll(tempReleaseYear);
@@ -121,7 +120,7 @@ public class HomeController implements Initializable {
 
 
             List<Double> tempRatingList = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
+            observableMovies.stream().filter(m -> ! tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
             Collections.sort(tempRatingList);
             ratingComboBox.getItems().clear();
             ratingComboBox.getItems().addAll((tempRatingList));
@@ -144,14 +143,14 @@ public class HomeController implements Initializable {
             observableMovies.addAll(result);
 
             List<Integer> tempReleaseYear = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
+            observableMovies.stream().filter(m -> ! tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
             Collections.sort(tempReleaseYear);
             releaseYearComboBox.getItems().clear();
             releaseYearComboBox.getItems().addAll(tempReleaseYear);
 
 
             List<Double> tempRatingList = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
+            observableMovies.stream().filter(m -> ! tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
             Collections.sort(tempRatingList);
             ratingComboBox.getItems().clear();
             ratingComboBox.getItems().addAll((tempRatingList));
@@ -165,5 +164,32 @@ public class HomeController implements Initializable {
         } else {
             movieList.sort(Movie::compareTo);
         }
+    }
+
+    public static String getMostPopularActor(List<Movie> movies) {
+        Map<String, Integer> actors = new HashMap<>();
+        List<Object> mostPopularActor = new ArrayList<>(List.of("", 0));
+
+        movies.stream().forEach(movie -> movie.getMainCast().stream().forEach(a -> {
+            if (actors.containsKey(a)) {
+                actors.replace(a, actors.get(a) + 1);
+            } else {
+                actors.put(a, 1);
+            }
+        }));
+
+        actors.entrySet().stream().forEach(actor -> {
+            if (actor.getValue() > (int) mostPopularActor.get(1)) {
+                mostPopularActor.set(0, actor.getKey());
+                mostPopularActor.set(1, actor.getValue());
+            }
+        });
+
+        return (String) mostPopularActor.get(0);
+    }
+
+    public static List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
+        List<Movie> test = movies.stream().filter((Movie movie) -> movie.getReleaseYear() <= endYear && movie.getReleaseYear() >= startYear).toList();
+        return test;
     }
 }
