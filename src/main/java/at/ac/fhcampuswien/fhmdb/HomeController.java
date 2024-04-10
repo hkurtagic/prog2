@@ -103,6 +103,7 @@ public class HomeController implements Initializable {
 
             List<Movie> result = null;
             try {
+                // searching query
                 result = MovieAPI.fetchMovies(searchQuery.isBlank() ? null : searchQuery, genre, releaseYear, rating);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -110,6 +111,7 @@ public class HomeController implements Initializable {
             observableMovies.clear();
             observableMovies.addAll(result);
 
+            // Update of release years in combobox when search criteria are applied
             List<Integer> tempReleaseYear = new ArrayList<>();
             observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
             Collections.sort(tempReleaseYear);
@@ -117,7 +119,7 @@ public class HomeController implements Initializable {
             releaseYearComboBox.getItems().addAll(tempReleaseYear);
             releaseYearComboBox.setValue(releaseYear);
 
-
+            // Update of ratings in combobox when search criteria are applied
             List<Double> tempRatingList = new ArrayList<>();
             observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
             Collections.sort(tempRatingList);
@@ -139,7 +141,7 @@ public class HomeController implements Initializable {
             // call of search method which also filters by genre
             List<Movie> result = new MovieUtils(allMovies).search(searchQuery).build();
             observableMovies.clear();
-            observableMovies.addAll(result);
+            observableMovies.addAll(allMovies);
 
             List<Integer> tempReleaseYear = new ArrayList<>();
             observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
@@ -191,7 +193,7 @@ public class HomeController implements Initializable {
         return test;
     }
 
-    public int getLongestMovieTitle(List<Movie> movies) {
+    public static int getLongestMovieTitle(List<Movie> movies) {
         return movies.stream()
                 .map(Movie::getTitle)
                 .mapToInt(String::length) // Map each title to its length
@@ -199,9 +201,9 @@ public class HomeController implements Initializable {
                 .orElse(0); // return 0 if movie list is empty
     }
 
-    public long countMoviesFrom(List<Movie> movies, List<String> directors) {
+    public static long countMoviesFrom(List<Movie> movies, String directors) {
         return movies.stream()
-                .filter(movie -> directors.equals(movie.getDirectors())) // Filter movies by director
+                .filter((Movie movie) -> movie.getDirectors().contains(directors)) // Filter movies by director
                 .count(); // Count the filtered movies
     }
 }
