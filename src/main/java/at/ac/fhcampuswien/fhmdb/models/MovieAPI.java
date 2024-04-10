@@ -19,14 +19,14 @@ public class MovieAPI {
 
 
     // Method to get the movies with selected criteria
-    public static List<Movie> fetchMovies(String query, GENRE genre, Integer releaseYear, Double rating) throws IOException {
+    public static List<Movie> fetchMovies(String query, String genre, Integer releaseYear, Double rating) throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
         if (query != null && !query.isEmpty()) {
             urlBuilder.addQueryParameter("query", query);
         }
         if (genre != null) {
-            urlBuilder.addQueryParameter("genre", genre.name());
+            urlBuilder.addQueryParameter("genre", genre);
         }
         if (releaseYear != null) {
             urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
@@ -48,10 +48,10 @@ public class MovieAPI {
          * Handling the response: ATTENTION: WE USED SYNCHRONOUS GET!!
          */
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
             Type listType = new TypeToken<ArrayList<Movie>>(){}.getType();
             return gson.fromJson(response.body().string(), listType);
+        } catch (IOException e) {
+            throw new IOException("Unexpected code " + e);
         }
     }
 }
