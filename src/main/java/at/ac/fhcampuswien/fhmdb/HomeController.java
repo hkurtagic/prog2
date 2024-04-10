@@ -173,4 +173,10 @@ public class HomeController implements Initializable {
                 .max() // find max length
                 .orElse(0); // return 0 if movie list is empty
     }
+
+    public long countMoviesFrom(List<Movie> movies, List<String> directors) {
+        return movies.stream()
+                .filter(movie -> directors.equals(movie.getDirectors())) // Filter movies by director
+                .count(); // Count the filtered movies
+    }
 }
