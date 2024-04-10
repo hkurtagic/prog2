@@ -2,7 +2,9 @@ package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.utils.MovieUtils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -10,8 +12,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -23,10 +27,10 @@ public class HomeController implements Initializable {
     public TextField searchField;
 
     @FXML
-    public JFXListView movieListView;
+    public JFXListView<Movie> movieListView;
 
     @FXML
-    public JFXComboBox genreComboBox;
+    public JFXComboBox<String> genreComboBox;
 
     @FXML
     public JFXButton sortBtn;
@@ -38,14 +42,10 @@ public class HomeController implements Initializable {
 
     // TODO: WIR MÜSSEN DIE BEIDEN COMBOBOXES NOCH IN DIE UI IN SCENE BUILDER EINFÜGEN!!!
     @FXML
-    public JFXComboBox releaseYearComboBox;
+    public JFXComboBox<Integer> releaseYearComboBox;
 
     @FXML
-    public JFXComboBox ratingComboBox;
-
-
-
-
+    public JFXComboBox<Double> ratingComboBox;
 
     public List<Movie> allMovies = Movie.initializeMovies();
 
@@ -67,6 +67,18 @@ public class HomeController implements Initializable {
         }
         genreComboBox.getItems().addAll(genreList);
 
+        releaseYearComboBox.setPromptText("Filter by Release Year");
+        ratingComboBox.setPromptText("Filter by Rating");
+
+        List<Integer> releaseYearList = new ArrayList<>();
+        observableMovies.stream().filter(m -> !releaseYearList.contains(m.getReleaseYear())).forEach((Movie m) -> releaseYearList.add(m.getReleaseYear()));
+        Collections.sort(releaseYearList);
+        releaseYearComboBox.getItems().addAll(releaseYearList);
+
+        List<Double> ratingList = new ArrayList<>();
+        observableMovies.stream().filter(m -> !ratingList.contains(m.getRating())).forEach((Movie m) -> ratingList.add(m.getRating()));
+        Collections.sort(ratingList);
+        ratingComboBox.getItems().addAll((ratingList));
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
@@ -84,106 +96,66 @@ public class HomeController implements Initializable {
 
         // search button
         searchBtn.setOnAction(actionEvent -> {
+
             // call of search method which also filters by genre
-            List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            String searchQuery = searchField.getText();
+            String genre = genreComboBox.getValue();
+            Double rating = ratingComboBox.getValue();
+            Integer releaseYear = releaseYearComboBox.getValue();
+
+            List<Movie> result = null;
+            try {
+                result = MovieAPI.fetchMovies(searchQuery.isBlank() ? null : searchQuery, genre, releaseYear, rating );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             observableMovies.clear();
             observableMovies.addAll(result);
+
+            List<Integer> tempReleaseYear = new ArrayList<>();
+            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
+            Collections.sort(tempReleaseYear);
+            releaseYearComboBox.getItems().clear();
+            releaseYearComboBox.getItems().addAll(tempReleaseYear);
+            releaseYearComboBox.setValue(releaseYear);
+
+
+            List<Double> tempRatingList = new ArrayList<>();
+            observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
+            Collections.sort(tempRatingList);
+            ratingComboBox.getItems().clear();
+            ratingComboBox.getItems().addAll((tempRatingList));
+            ratingComboBox.setValue(rating);
         });
 
         // clear button
         clearBtn.setOnAction(actionEvent -> {
             // unset selected genre
             genreComboBox.setValue(null);
+            releaseYearComboBox.setValue(null);
+            ratingComboBox.setValue(null);
+            searchField.setText("");
+
+            String searchQuery = searchField.getText();
+
             // call of search method which also filters by genre
-            List<Movie> result = filteredSearch(searchField.getText(), (String) genreComboBox.getValue(), allMovies);
+            List<Movie> result = new MovieUtils(allMovies).search(searchQuery).build();
             observableMovies.clear();
             observableMovies.addAll(result);
+
+            List<Integer> tempReleaseYear = new ArrayList<>();
+            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
+            Collections.sort(tempReleaseYear);
+            releaseYearComboBox.getItems().clear();
+            releaseYearComboBox.getItems().addAll(tempReleaseYear);
+
+
+            List<Double> tempRatingList = new ArrayList<>();
+            observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
+            Collections.sort(tempRatingList);
+            ratingComboBox.getItems().clear();
+            ratingComboBox.getItems().addAll((tempRatingList));
         });
-    }
-
-
-
-
-    public static List<Movie> filterGenre(String genre, List<Movie> allMovies) {
-        if (genre == null) {
-            return allMovies;
-        } else {
-            List<Movie> searchResult = new ArrayList<>();
-
-            for (Movie movie : allMovies) {
-                List<String> genreList = new ArrayList<>();
-
-                // add Genres as a String to genreList
-                movie.getGenre().forEach(g -> genreList.add(g.toString()));
-
-                if (genreList.contains(genre)) searchResult.add(movie);
-            }
-
-            return searchResult;
-
-        }
-    }
-
-    /*
-     * The following search method only covers the search function without filters
-     */
-
-    public static List<Movie> unfilteredSearch(String searchQuery, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
-        List<Movie> searchResults = new ArrayList<>();
-        if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-            searchResults.addAll(allMovies);
-        } else {
-            for (Movie movie : allMovies) {
-                if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                    searchResults.add(movie);
-                    System.out.println(movie.getTitle());
-                }
-            }
-
-            // terminal output of search results
-            System.out.println("\nSearch-Results\n");
-            for (Movie movie : searchResults) {
-                System.out.println(movie.getTitle());
-            }
-
-        }
-        return searchResults;
-    }
-
-    /*
-     *  The following search method combines search and filter functionality
-     */
-    public static List<Movie> filteredSearch(String searchQuery, String genre, List<Movie> allMovies) {    // allMovies is the Movie base which will be searched through
-        List<Movie> searchResults = new ArrayList<>();
-        if (genre == null) {
-            // call of normal search method
-            searchResults.addAll(unfilteredSearch(searchQuery, allMovies));
-        } else {
-            if (searchQuery.isBlank()) {    // checks for whitespaces or empty query
-                // call of filter method
-                searchResults.addAll(filterGenre(genre, allMovies));
-            } else {
-                // first do the search algorithm
-                for (Movie movie : allMovies) {
-                    if (movie.getTitle().toLowerCase().contains(searchQuery.toLowerCase()) || movie.getDescription().toLowerCase().contains(searchQuery.toLowerCase())) {
-                        searchResults.add(movie);
-                        System.out.println(movie.getTitle());
-                    }
-                }
-
-                // then filter search results
-                List<Movie> result = filterGenre(genre, searchResults);
-                searchResults.clear();
-                searchResults.addAll(result);
-
-                // terminal output of search results
-                System.out.println("\nSearch-Results\n");
-                for (Movie movie : searchResults) {
-                    System.out.println(movie.getTitle());
-                }
-            }
-        }
-        return searchResults;
     }
 
     public static void sort(List<Movie> movieList, String order) {
