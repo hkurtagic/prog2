@@ -19,7 +19,7 @@ public class MovieAPI {
 
 
     // Method to get the movies with selected criteria
-    public static List<Movie> fetchMovies(String query, String genre, Integer releaseYear, Double rating) throws IOException {
+    public static List<Movie> fetchMovies(String query, String genre, Integer releaseYear, Double ratingFrom) throws IOException {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
 
         if (query != null && !query.isEmpty()) {
@@ -31,8 +31,8 @@ public class MovieAPI {
         if (releaseYear != null) {
             urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
         }
-        if (rating != null) {
-            urlBuilder.addQueryParameter("rating", rating.toString());
+        if (ratingFrom != null) {
+            urlBuilder.addQueryParameter("ratingFrom", ratingFrom.toString());
         }
 
         /*
@@ -45,7 +45,7 @@ public class MovieAPI {
 
 
         /*
-         * Handling the response: ATTENTION: WE USED SYNCHRONOUS GET!!
+         * Handling the response (synchronous get)
          */
         try (Response response = client.newCall(request).execute()) {
             Type listType = new TypeToken<ArrayList<Movie>>(){}.getType();

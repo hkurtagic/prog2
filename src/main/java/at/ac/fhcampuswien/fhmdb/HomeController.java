@@ -103,7 +103,7 @@ public class HomeController implements Initializable {
 
             List<Movie> result = null;
             try {
-                // searching query
+                // searching query with all criteria
                 result = MovieAPI.fetchMovies(searchQuery.isBlank() ? null : searchQuery, genre, releaseYear, rating);
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -143,6 +143,7 @@ public class HomeController implements Initializable {
             observableMovies.clear();
             observableMovies.addAll(allMovies);
 
+            // undo temporary lists
             List<Integer> tempReleaseYear = new ArrayList<>();
             observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
             Collections.sort(tempReleaseYear);
