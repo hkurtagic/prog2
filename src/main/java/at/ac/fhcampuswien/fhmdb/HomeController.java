@@ -86,10 +86,14 @@ public class HomeController implements Initializable {
         sortBtn.setOnAction(actionEvent -> {
             if (sortBtn.getText().equals("Sort (asc)")) {
                 sortBtn.setText("Sort (desc)");
-                sort(observableMovies, "asc");
+                List<Movie> temp = sort(observableMovies, "asc");
+                observableMovies.clear();
+                observableMovies.addAll(temp);
             } else {
                 sortBtn.setText("Sort (asc)");
-                sort(observableMovies, "des");
+                List<Movie> temp = sort(observableMovies, "asc");
+                observableMovies.clear();
+                observableMovies.addAll(temp);
             }
         });
 
@@ -112,20 +116,7 @@ public class HomeController implements Initializable {
             observableMovies.addAll(result);
 
             // Update of release years in combobox when search criteria are applied
-            List<Integer> tempReleaseYear = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
-            Collections.sort(tempReleaseYear);
-            releaseYearComboBox.getItems().clear();
-            releaseYearComboBox.getItems().addAll(tempReleaseYear);
-            releaseYearComboBox.setValue(releaseYear);
-
-            // Update of ratings in combobox when search criteria are applied
-            List<Double> tempRatingList = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
-            Collections.sort(tempRatingList);
-            ratingComboBox.getItems().clear();
-            ratingComboBox.getItems().addAll((tempRatingList));
-            ratingComboBox.setValue(rating);
+            handleElements();
         });
 
         // clear button
@@ -143,27 +134,19 @@ public class HomeController implements Initializable {
             observableMovies.clear();
             observableMovies.addAll(allMovies);
 
-            List<Integer> tempReleaseYear = new ArrayList<>();
-            observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
-            Collections.sort(tempReleaseYear);
-            releaseYearComboBox.getItems().clear();
-            releaseYearComboBox.getItems().addAll(tempReleaseYear);
-
-            List<Double> tempRatingList = new ArrayList<>();
-            observableMovies.stream().filter(m -> ! tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
-            Collections.sort(tempRatingList);
-            ratingComboBox.getItems().clear();
-            ratingComboBox.getItems().addAll((tempRatingList));
+            handleElements();
         });
     }
 
-    public static void sort(List<Movie> movieList, String order) {
+    public static List<Movie> sort(List<Movie> movieList, String order) {
+        List<Movie> modifiableList = new ArrayList<>(movieList);
         if (order.equals("des")) {
-            movieList.sort(Movie::compareTo);
-            Collections.reverse(movieList);
+            modifiableList.sort(Movie::compareTo);
+            Collections.reverse(modifiableList);
         } else {
-            movieList.sort(Movie::compareTo);
+            modifiableList.sort(Movie::compareTo);
         }
+        return modifiableList;
     }
 
     public static String getMostPopularActor(List<Movie> movies) {
@@ -189,8 +172,9 @@ public class HomeController implements Initializable {
     }
 
     public static List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear) {
-        List<Movie> test = movies.stream().filter((Movie movie) -> movie.getReleaseYear() <= endYear && movie.getReleaseYear() >= startYear).toList();
-        return test;
+        return movies.stream()
+                .filter((Movie movie) -> movie.getReleaseYear() <= endYear && movie.getReleaseYear() >= startYear)
+                .toList();
     }
 
     public static int getLongestMovieTitle(List<Movie> movies) {
@@ -205,5 +189,23 @@ public class HomeController implements Initializable {
         return movies.stream()
                 .filter((Movie movie) -> movie.getDirectors().contains(directors)) // Filter movies by director
                 .count(); // Count the filtered movies
+    }
+
+    private void handleElements() {
+        Integer releaseYearComboBoxValue = releaseYearComboBox.getValue();
+        List<Integer> tempReleaseYear = new ArrayList<>();
+        observableMovies.stream().filter(m -> !tempReleaseYear.contains(m.getReleaseYear())).forEach((Movie m) -> tempReleaseYear.add(m.getReleaseYear()));
+        Collections.sort(tempReleaseYear);
+        releaseYearComboBox.getItems().clear();
+        releaseYearComboBox.getItems().addAll(tempReleaseYear);
+        releaseYearComboBox.setValue(releaseYearComboBoxValue);
+
+        Double ratingComboBoxValue = ratingComboBox.getValue();
+        List<Double> tempRatingList = new ArrayList<>();
+        observableMovies.stream().filter(m -> ! tempRatingList.contains(m.getRating())).forEach((Movie m) -> tempRatingList.add(m.getRating()));
+        Collections.sort(tempRatingList);
+        ratingComboBox.getItems().clear();
+        ratingComboBox.getItems().addAll((tempRatingList));
+        ratingComboBox.setValue(ratingComboBoxValue);
     }
 }
