@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.utils;
 
+import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
@@ -50,6 +51,11 @@ public class MovieUtils extends ArrayList<Movie> {
             System.out.println(movie.getTitle() + ' ' + movie.getReleaseYear());
         }
 
+        return this;
+    }
+
+    public MovieUtils sort(String order) {
+        allMovies = HomeController.sort(allMovies, order);
         return this;
     }
 
