@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MovieAPI {
     private static final OkHttpClient client = new OkHttpClient();
@@ -19,8 +20,8 @@ public class MovieAPI {
 
 
     // Method to get the movies with selected criteria
-    public static List<Movie> fetchMovies(String query, String genre, Integer releaseYear, Double rating) throws IOException {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL).newBuilder();
+    public static List<Movie> fetchMovies(String query, String genre, Integer releaseYear, Double ratingFrom) throws IOException {
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(BASE_URL)).newBuilder();
 
         if (query != null && !query.isEmpty()) {
             urlBuilder.addQueryParameter("query", query);
@@ -31,8 +32,8 @@ public class MovieAPI {
         if (releaseYear != null) {
             urlBuilder.addQueryParameter("releaseYear", releaseYear.toString());
         }
-        if (rating != null) {
-            urlBuilder.addQueryParameter("rating", rating.toString());
+        if (ratingFrom != null) {
+            urlBuilder.addQueryParameter("ratingFrom", ratingFrom.toString());
         }
 
         /*
