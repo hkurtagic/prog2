@@ -1,8 +1,8 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+import at.ac.fhcampuswien.fhmdb.controllers.HomeViewController;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HomeControllerTest {
+public class MainViewControllerTest {
 
 
     @Test
@@ -31,7 +31,7 @@ public class HomeControllerTest {
                 "test", "test1", "test2")), new ArrayList<>(List.of(
                 "test", "test1", "test2")), new ArrayList<>(List.of(
                 "test", "test1", "test2")), 9));
-        actual = HomeController.getMostPopularActor(allMovies);
+        actual = HomeViewController.getMostPopularActor(allMovies);
 
         assertEquals(expected, actual);
     }
@@ -57,7 +57,7 @@ public class HomeControllerTest {
                 "test", "test1", "test2")), new ArrayList<>(List.of(
                 "test", "test1", "test2")), new ArrayList<>(List.of(
                 "test", "test1", "test2")), 9));
-        actual = HomeController.getMoviesBetweenYears(allMovies, 1920, 2000);
+        actual = HomeViewController.getMoviesBetweenYears(allMovies, 1920, 2000);
 
         List<Movie> finalActual = actual;
         assertAll("Check if the list of movies correct",
@@ -91,7 +91,7 @@ public class HomeControllerTest {
                 "test", "test1", "test2")), 9));
 
 
-        actual = HomeController.getLongestMovieTitle(allMovies);
+        actual = HomeViewController.getLongestMovieTitle(allMovies);
 
         assertTrue(actual == expected);
     }
@@ -121,7 +121,7 @@ public class HomeControllerTest {
                 "test", "test1", "test2")), 9));
 
 
-        expected = HomeController.countMoviesFrom(allMovies, "Hansi");
+        expected = HomeViewController.countMoviesFrom(allMovies, "Hansi");
 
     }
 

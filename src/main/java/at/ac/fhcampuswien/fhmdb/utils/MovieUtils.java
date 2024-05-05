@@ -1,13 +1,10 @@
 package at.ac.fhcampuswien.fhmdb.utils;
 
-import at.ac.fhcampuswien.fhmdb.HomeController;
-import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+import at.ac.fhcampuswien.fhmdb.controllers.HomeViewController;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class MovieUtils extends ArrayList<Movie> {
     private List<Movie> allMovies;
@@ -55,7 +52,7 @@ public class MovieUtils extends ArrayList<Movie> {
     }
 
     public MovieUtils sort(String order) {
-        allMovies = HomeController.sort(allMovies, order);
+        allMovies = HomeViewController.sort(allMovies, order);
         return this;
     }
 

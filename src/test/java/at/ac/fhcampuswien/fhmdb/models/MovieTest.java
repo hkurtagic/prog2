@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.models;
 
-import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.utils.MovieUtils;
 import org.junit.jupiter.api.Test;

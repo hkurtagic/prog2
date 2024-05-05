@@ -1,6 +1,7 @@
-package at.ac.fhcampuswien.fhmdb;
+package at.ac.fhcampuswien.fhmdb.controllers;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+import at.ac.fhcampuswien.fhmdb.enums.Screens;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -11,14 +12,16 @@ import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class HomeController implements Initializable {
+public class HomeViewController implements Initializable {
     @FXML
     public JFXButton searchBtn;
 
@@ -45,10 +48,21 @@ public class HomeController implements Initializable {
     @FXML
     public JFXComboBox<Double> ratingComboBox;
 
+    @FXML
+    public JFXButton homeBtn;
+    @FXML
+    public JFXButton aboutBtn;
+    @FXML
+    public JFXButton watchlistBtn;
+    @FXML
+    public BorderPane mainPane;    // to load in components
+
     public List<Movie> allMovies = Movie.initializeMovies();
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically
     // updates corresponding UI elements when underlying data changes
+
+    String currentView = "";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -91,7 +105,7 @@ public class HomeController implements Initializable {
                 observableMovies.addAll(temp);
             } else {
                 sortBtn.setText("Sort (asc)");
-                List<Movie> temp = sort(observableMovies, "asc");
+                List<Movie> temp = sort(observableMovies, "desc");
                 observableMovies.clear();
                 observableMovies.addAll(temp);
             }
@@ -136,11 +150,12 @@ public class HomeController implements Initializable {
 
             handleElements();
         });
+
     }
 
     public static List<Movie> sort(List<Movie> movieList, String order) {
         List<Movie> modifiableList = new ArrayList<>(movieList);
-        if (order.equals("des")) {
+        if (order.equals("desc")) {
             modifiableList.sort(Movie::compareTo);
             Collections.reverse(modifiableList);
         } else {
