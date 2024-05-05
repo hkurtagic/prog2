@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.controllers;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
+import at.ac.fhcampuswien.fhmdb.database.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.enums.Screens;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
@@ -223,4 +224,7 @@ public class HomeViewController implements Initializable {
         ratingComboBox.getItems().addAll((tempRatingList));
         ratingComboBox.setValue(ratingComboBoxValue);
     }
-}
+
+
+    //MovieEntity.genresToString();
+ }
