@@ -10,9 +10,6 @@ import javafx.scene.layout.BorderPane;
 import java.io.IOException;
 
 public class MainViewController {
-
-
-
     public String currentView = Screens.HOME.path;
 
     @FXML
@@ -24,8 +21,12 @@ public class MainViewController {
     @FXML
     public BorderPane mainPane;    // to load in components
 
-    public void setContentView(String pathToView) {
 
+    public void initialize() {
+        setContentView(Screens.HOME.path);
+    }
+
+    public void setContentView(String pathToView) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(pathToView));     // getClass() damit man Ressourcen korrekt von der aktuellen Klasse aus erreicht
 
         try {

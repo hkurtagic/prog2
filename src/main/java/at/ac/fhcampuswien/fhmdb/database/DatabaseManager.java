@@ -20,12 +20,16 @@ public class DatabaseManager {
     private static ConnectionSource conn;
 
     // Data Access Object pattern for DB-Operations
-    static Dao<MovieEntity, Long> dao;
-
+    private static Dao<MovieEntity, Long> dao;
 
 
     // Singleton Pattern to avoid establishment of multiple DB connections
     private static DatabaseManager instance;
+
+
+    public Dao<MovieEntity, Long> getDao() {
+        return this.dao;
+    }
 
     // private constructor which cannot be called with new-keyword from outside the class
     private DatabaseManager() {

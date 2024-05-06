@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
 
+import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
@@ -9,6 +10,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.h2.engine.Database;
 
 import java.util.stream.Collectors;
 
@@ -51,6 +53,14 @@ public class MovieCell extends ListCell<Movie> {
             }
             setGraphic(layout);
         });
+
+
+        addToWatchlistBtn.setOnMouseClicked(mouseEvent -> {
+            // DatabaseManager.getDatabaseInstance().dao.create();      // Create repository instead of this line
+
+        });
+
+
     }
 
     private VBox getDetails() {
