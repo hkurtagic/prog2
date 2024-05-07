@@ -49,8 +49,8 @@ public class Movie implements Comparable<Movie> {
         this.title = title;
     }
 
-    public List<GENRE> getGenre() {
-        return genres;
+    public String getGenre() {
+        return genres.toString();
     }
 
     public void setGenre(List<GENRE> genres) {
@@ -138,6 +138,7 @@ public class Movie implements Comparable<Movie> {
     }
 
 
+
     public static List<Movie> initializeMovies() {
         try {
             // call movies without any criteria
@@ -157,6 +158,4 @@ public class Movie implements Comparable<Movie> {
         }
         return 0;
     }
-
-
 }

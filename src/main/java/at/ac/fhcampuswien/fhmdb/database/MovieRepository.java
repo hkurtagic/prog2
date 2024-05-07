@@ -15,7 +15,7 @@ public class MovieRepository {
 
     public MovieRepository() {
         try {
-            this.dao = DatabaseManager.getDatabaseInstance().getDao(); // Adjust this if needed
+            this.dao = DatabaseManager.getDatabaseInstance().getDao();
         } catch (Exception e) {
             throw new RuntimeException("Error initializing Movie DAO", e);
         }

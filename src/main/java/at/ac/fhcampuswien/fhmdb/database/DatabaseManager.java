@@ -8,42 +8,33 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-/**
- * Builds the connection between ORMLite table and H2 database engine
- */
 public class DatabaseManager {
     public static final String DB_URL = "jdbc:h2:file: ./db/movieDB";
     public static final String username = "user";
     public static final String password = "pass";
 
-
     private static ConnectionSource conn;
 
-    // Data Access Object pattern for DB-Operations
     private static Dao<MovieEntity, Long> dao;
+    private static Dao<WatchlistMovieEntity, Long> watchListDao;
 
-
-    // Singleton Pattern to avoid establishment of multiple DB connections
     private static DatabaseManager instance;
-
-
-    public Dao<MovieEntity, Long> getDao() {
-        return this.dao;
-    }
 
     // private constructor which cannot be called with new-keyword from outside the class
     private DatabaseManager() {
         try {
             createConnectionsSource();
-            dao = DaoManager.createDao(conn, MovieEntity.class);    // create dao to do operations with db
+            dao = DaoManager.createDao(conn, MovieEntity.class);
+            watchListDao = DaoManager.createDao(conn, WatchlistMovieEntity.class); // Initialize watchListDao
             createTables();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
+    // Singleton Pattern to avoid establishment of multiple DB connections
     public static DatabaseManager getDatabaseInstance() {
-        if (instance == null) {     // if no instance was created until now...
+        if (instance == null) {
             instance = new DatabaseManager();
         }
         return instance;
@@ -51,9 +42,18 @@ public class DatabaseManager {
 
     private static void createTables() throws SQLException {
         TableUtils.createTableIfNotExists(conn, MovieEntity.class);
+        TableUtils.createTableIfNotExists(conn, WatchlistMovieEntity.class); // Create table for WatchlistMovieEntity
     }
 
     private static void createConnectionsSource() throws SQLException {
         conn = new JdbcConnectionSource(DB_URL, username, password);
+    }
+
+    public Dao<MovieEntity, Long> getDao() {
+        return dao;
+    }
+
+    public Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
+        return watchListDao;
     }
 }

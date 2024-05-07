@@ -2,7 +2,8 @@ package at.ac.fhcampuswien.fhmdb.controllers;
 
 import at.ac.fhcampuswien.fhmdb.bin.GENRE;
 import at.ac.fhcampuswien.fhmdb.database.MovieEntity;
-import at.ac.fhcampuswien.fhmdb.enums.Screens;
+import at.ac.fhcampuswien.fhmdb.database.WatchlistMovieEntity;
+import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
@@ -13,7 +14,6 @@ import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -42,7 +42,6 @@ public class HomeViewController implements Initializable {
     public JFXButton clearBtn;
 
 
-    // TODO: WIR MÜSSEN DIE BEIDEN COMBOBOXES NOCH IN DIE UI IN SCENE BUILDER EINFÜGEN!!!
     @FXML
     public JFXComboBox<Integer> releaseYearComboBox;
 
@@ -65,13 +64,23 @@ public class HomeViewController implements Initializable {
 
     String currentView = "";
 
+    private final ClickEventHandler<MovieEntity> onAddToWatchlistClicked = (clickedItem) -> {
+        // Add movie to watchlist
+        WatchlistRepository watchlistRepo = new WatchlistRepository();
+        WatchlistMovieEntity watchlistMovie = new WatchlistMovieEntity();
+        watchlistMovie.setApiId(clickedItem.getApiId());
+        // Set other properties of the watchlist movie based on clickedItem
+        watchlistRepo.addToWatchlist(watchlistMovie);
+    };
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+        movieListView.setCellFactory(movieListView -> new MovieCell(onAddToWatchlistClicked,null));  // use custom cell factory to display data
+
 
         // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.setPromptText("Filter by Genre");

@@ -26,3 +26,14 @@ public class FhmdbApplication extends Application {
         launch();
     }
 }
+
+/*
+ *  TODO
+ *   1) WATCHLIST-ENTITY- UND REPOSITORY KLASSE ADDEN
+ *   2) Umsetzung der „To Watchlist“/“remove“ Funktionen im Controller/Business Logic Layer.
+ *       Diese werden mithilfe von Lambda Expressions, Functional Interface und entsprechenden Callback realisiert.
+ *   3) Exception Handling ist implementiert. Dazu werden zwei Custom Exception Klassen
+ *   (MovieAPIException und DatabaseException) genutzt. Exceptions werden, wo sinnvoll, an
+ *   die Controller Klasse(n) propagiert und gehandelt. Wenn eine MovieAPIException beim
+ *   Abrufen der API auftritt, werden die zuvor gecachten Filme aus der DB geladen. (3 Pkt.)
+ */

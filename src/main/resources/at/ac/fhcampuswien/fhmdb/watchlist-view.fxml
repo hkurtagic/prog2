@@ -1,15 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="at.ac.fhcampuswien.fhmdb.controllers.WatchlistViewController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="at.ac.fhcampuswien.fhmdb.controllers.WatchlistViewController">
 
-    <Label text="Watchlist"></Label>
-</AnchorPane>
+    <!-- Sidebar Navigation -->
+    <left>
+        <VBox spacing="8" style="-fx-background-color: black;" alignment="CENTER">
+            <Label text="FHMD" style="-fx-text-fill: #f5c518; -fx-font-size: 20;" />
+            <JFXButton text="Home" fx:id="homeBtn" />
+            <JFXButton text="Watchlist" fx:id="watchlistBtn" />
+            <JFXButton text="About" fx:id="aboutBtn" />
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="10" style="-fx-background-color: #333333; -fx-padding: 10;">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Welcome to FHMD!" style="-fx-text-fill: #f5c518; -fx-font-size: 24;" />
+                <Region fx:id="spacer" HBox.hgrow="ALWAYS"/>
+                <JFXButton text="Clear" fx:id="clearBtn" />
+            </HBox>
+
+            <!-- Movies List -->
+            <JFXListView fx:id="watchlistListView" />
+
+        </VBox>
+    </center>
+
+</BorderPane>
