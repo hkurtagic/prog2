@@ -5,14 +5,14 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @DatabaseTable(tableName = "movies")
 public class MovieEntity {
-    @DatabaseField (generatedId = true)     // will increase for new entries and avoids duplicates
+    @DatabaseField(generatedId = true)     // will increase for new entries and avoids duplicates
     private long id;
+
     @DatabaseField()
     private String apiId;
     @DatabaseField
@@ -30,135 +30,63 @@ public class MovieEntity {
     @DatabaseField
     private double rating;
 
+    public MovieEntity() {
+        /* Default Constructor */
+    }
+
+    public MovieEntity(String apiId, String title, String description, String genres, int releaseYear, String imgUrl,
+                       int lengthInMinutes, double rating) {
+        this.apiId = apiId;
+        this.title = title;
+        this.description = description;
+        this.genres = genres;
+        this.releaseYear = releaseYear;
+        this.imgUrl = imgUrl;
+        this.lengthInMinutes = lengthInMinutes;
+        this.rating = rating;
+    }
+
+    public static String genresToString(List<GENRE> genres) {
+        StringBuilder result = new StringBuilder();
+        genres.stream().forEach((genre -> result.append(genre.toString()).append(", ")));
+
+        return result.replace(result.length() - 2, result.length(), "").toString();
+    }
+
+    public static List<MovieEntity> fromMovies(List<Movie> movies) {
+        return movies.stream().map(movie -> new MovieEntity(movie.getId(), movie.getTitle(), movie.getDescription(),
+                genresToString(movie.getGenre()), movie.getReleaseYear(), movie.getImgUrl(),
+                movie.getLengthInMinutes(), movie.getRating())).toList();
+    }
+
+    public static List<Movie> toMovie(List<MovieEntity> movieEntities) {
+        List<Movie> movies = new ArrayList<>();
+
+        for (MovieEntity me : movieEntities) {
+            List<GENRE> genreList =
+                    List.of(me.genres.split(", ")).stream().map(ge -> GENRE.valueOf(ge.toUpperCase())).toList();
+
+            movies.add(new Movie(me.title, me.description, genreList, String.valueOf(me.id), me.releaseYear,
+                    me.imgUrl, me.lengthInMinutes, List.of(), List.of(), List.of(), me.rating));
+        }
+
+        return movies;
+    }
+
+    public static Movie toMovie(MovieEntity movieEntity) {
+        List<GENRE> genreList =
+                List.of(movieEntity.genres.split(", ")).stream().map(ge -> GENRE.valueOf(ge.toUpperCase())).toList();
+
+        return new Movie(movieEntity.title, movieEntity.description, genreList, String.valueOf(movieEntity.id),
+                movieEntity.releaseYear, movieEntity.imgUrl, movieEntity.lengthInMinutes, null, null, null,
+                movieEntity.rating);
+    }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getApiId() {
         return apiId;
-    }
-
-    public void setApiId(String apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getGenres() {
-        return genres;
-    }
-
-    public void setGenres(String genres) {
-        this.genres = genres;
-    }
-
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
-
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
-    public int getLengthInMinutes() {
-        return lengthInMinutes;
-    }
-
-    public void setLengthInMinutes(int lengthInMinutes) {
-        this.lengthInMinutes = lengthInMinutes;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
-    // convert a list of genres to string
-    public static String genresToString(List<GENRE> genres) {
-        return genres.stream()
-                .map(GENRE::name)
-                .collect(Collectors.joining(", "));
-    }
-
-
-    // Convert a list of Movie objects into MovieEntity objects
-    public static List<MovieEntity> fromMovies(List<Movie> movies) {
-        return movies.stream()
-                .map(movie -> {
-                    MovieEntity entity = new MovieEntity();
-                    try {
-                        entity.id = Long.parseLong(movie.getId());
-                    } catch (NumberFormatException e) {
-                        entity.id = -1; // Default or error value for non-numeric IDs
-                        System.err.println("Invalid movie ID format: " + movie.getId());
-                    }
-                    entity.apiId = movie.getId();
-                    entity.title = movie.getTitle();
-                    entity.description = movie.getDescription();
-                    entity.genres = movie.getGenre();
-                    entity.releaseYear = movie.getReleaseYear();
-                    entity.imgUrl = movie.getImgUrl();
-                    entity.lengthInMinutes = movie.getLengthInMinutes();
-                    entity.rating = movie.getRating();
-                    return entity;
-                })
-                .collect(Collectors.toList());
-    }
-
-    // Convert a list of MovieEntity objects into Movie objects
-    public static List<Movie> toMovies(List<MovieEntity> movieEntities) {
-        return movieEntities.stream()
-                .map(MovieEntity::toMovie)
-                .collect(Collectors.toList());
-    }
-
-    public static Movie toMovie(MovieEntity entity) {
-        List<GENRE> genres = Arrays.stream(entity.genres.split(", "))
-                .map(GENRE::valueOf)
-                .collect(Collectors.toList());
-
-        return new Movie(
-                entity.title,
-                entity.description,
-                genres,
-                entity.apiId,
-                entity.releaseYear,
-                entity.imgUrl,
-                entity.lengthInMinutes,
-                null, // directors
-                null, // writers
-                null, // main cast
-                entity.rating
-        );
     }
 }

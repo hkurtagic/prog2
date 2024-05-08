@@ -49,11 +49,11 @@ public class DatabaseManager {
         conn = new JdbcConnectionSource(DB_URL, username, password);
     }
 
-    public Dao<MovieEntity, Long> getDao() {
+    public static Dao<MovieEntity, Long> getDao() {
         return dao;
     }
 
-    public Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
+    public static Dao<WatchlistMovieEntity, Long> getWatchlistDao() throws SQLException {
         return watchListDao;
     }
 }

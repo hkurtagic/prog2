@@ -1,53 +1,65 @@
 package at.ac.fhcampuswien.fhmdb.database;
 
+import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.DeleteBuilder;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WatchlistRepository {
-    private final Dao<WatchlistMovieEntity, Long> dao;
+    Dao<WatchlistMovieEntity, Long> dao;
 
-    public WatchlistRepository() {
-        try {
-            // Ensure this method correctly returns the Watchlist DAO
-            this.dao = DatabaseManager.getDatabaseInstance().getWatchlistDao();
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing Watchlist DAO", e);
+    public WatchlistRepository() throws SQLException {
+        DatabaseManager.getDatabaseInstance();
+        dao = DatabaseManager.getWatchlistDao();
+    }
+
+    public List<WatchlistMovieEntity> getAll() throws SQLException {
+        return dao.queryForAll();
+    }
+
+    public void deleteAll(List<WatchlistMovieEntity> movieEntityList) throws SQLException {
+        dao.delete(movieEntityList);
+    }
+
+    public void add(WatchlistMovieEntity me) throws SQLException {
+        if (dao.queryForEq("apiId", me.getApiId()).stream().toList().isEmpty()) {
+            dao.create(me);
         }
     }
 
-    // Retrieve all watchlist movies from the database
-    public List<WatchlistMovieEntity> getWatchlist() {
-        try {
-            return dao.queryForAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public void addAll(List<WatchlistMovieEntity> me) throws SQLException {
+        me.stream().map(m -> {
+            try {
+                if (dao.queryForEq("apiId", m.getApiId()).stream().toList().isEmpty()) {
+                    return dao.create(m);
+                } else {
+                    return null;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    // Add a movie to the watchlist
-    public int addToWatchlist(WatchlistMovieEntity movie) {
-        try {
-            return dao.create(movie);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0; // Return 0 indicating failure
-        }
+    public void delete(WatchlistMovieEntity me) throws SQLException {
+        dao.delete(me);
     }
 
-    // Remove a movie from the watchlist by apild
-    public int removeFromWatchlist(String apild) {
-        try {
-            // Ensure the DAO returns the correct DeleteBuilder
-            DeleteBuilder<WatchlistMovieEntity, Long> deleteBuilder = dao.deleteBuilder();
-            deleteBuilder.where().eq("apild", apild);
-            return deleteBuilder.delete();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+    public List<Movie> toMovies(List<WatchlistMovieEntity> wlmel) throws SQLException {
+        List<Movie> movies = new ArrayList<>();
+        MovieRepository movieRepository = new MovieRepository();
+
+        wlmel.stream().map((wlme) -> {
+            try {
+                return movieRepository.get(wlme.getId());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }).map((MovieEntity::toMovie)).forEach(movies::addAll);
+
+        return movies;
         }
-    }
 }
